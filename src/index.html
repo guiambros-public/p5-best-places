@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Udacity Project P5 - 50 Best Places in NYC</title>
+
+    <script src="js/jquery.js"></script>
+    <script src="js/underscore.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script src="js/backbone.js"></script>
+    <script src="js/backbone.localStorage.js"></script>
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places"></script>
+
+    <script src="js/model.js"></script>
+    <script src="js/views.js"></script>
+    <script src="js/app.js"></script>
+
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet" type="text/css">
+
+    <script type="text/javascript">
+      // overcome the problem with Chrome, that doesn't refresh the page when mouse is not over the viewport
+      setInterval(function(){
+        document.getElementsByTagName('body')[0].focus();
+      }, 250);
+    </script>
+
+</head>
+
+<body>
+
+<div id="header" class="navbar navbar-default navbar-fixed-top header">
+    <h2 id="header-title">Oh, The Places You'll Go &ndash; NYC Edition</h2>
+</div>
+
+<div id="wrapper">
+
+  <div id="listview-wrapper" class="col-md-3">
+            <div id="listview-title">
+                Explore the coolest places in NYC:
+            </div>
+            <div id="listview">
+                <ul class="nav list-group">
+                    <script type="text/template" id="sidebar-item-template">
+                        <li><a class="list-group-item" href="#"><%= title %></a></li>
+                    </script>
+                    <li><a class="list-group-item" href="#">Sidebar Item 2</a></li>
+                    <li><a class="list-group-item" href="#">Sidebar Item 3</a></li>
+                    <li><a class="list-group-item" href="#">Sidebar Item 4</a></li>
+                    <li><a class="list-group-item" href="#">Sidebar Item 5</a></li>
+
+                    <div id="padding-bottom">
+                    </div>
+                </ul>
+            </div>
+        </div>
+
+        <div id="mapview-wrapper" class="col-md-9 pull-right">
+            <div id="mapview">
+              <div class="page-header">
+              </div>
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3025.1657941475432!2d-73.98527129999997!3d40.6923461!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25a4b0d52345d%3A0x3cbb275875c9697!2s365+Bridge+St%2C+Brooklyn%2C+NY+11201!5e0!3m2!1sen!2sus!4v1432268443864" width="400" height="400" frameborder="0" style="border:0"></iframe>
+            </div>
+        </div>
+</div>
+
+
+</body>
+</html>
+
+
+

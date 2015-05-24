@@ -1,0 +1,26 @@
+{
+  "name": "p5",
+  "version": "0.0.1",
+  "authors": [
+    "Gui Ambros <gui@wrgms.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "gulp": "~3.8.11"
+  },
+  "devDependencies": {
+    "backbone": "~1.1.2",
+    "backbone.localStorage": "~1.1.16",
+    "jquery": "~2.1.4",
+    "underscore": "~1.8.3",
+    "knockout": "~3.3.0",
+    "bootstrap": "~3.3.4"
+  }
+}
