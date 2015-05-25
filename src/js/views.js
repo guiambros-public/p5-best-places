@@ -5,15 +5,23 @@ var app = app || {};
     'use strict';
 
     app.AppView = Backbone.View.extend({
-    	el: $("#sidebar-item-template"),
-    	initialize: function () {
-    		this.render();
+    	template: $("#sidebar-item-template").html(),
+        //template: _.template($("#sidebar-item-template").html()),
+
+        initialize: function () {
+    		_.bindAll(this, 'render');
+            app.Places.bind ( "change", this.render );
+            this.render();
     	},
 
     	render: function () {
-    		var template = _.template( $('#sidebar-item-template').html(), {} );
-    		this.$el.html ( template );
+    		console.log("Rendering data...");
+            var compiled = _.template(this.template);
+            $("#list-group").append(compiled);
+            //var compiled_template = _.template( $("#sidebar-item-template").html() );
+    		//this.$el.html ( template );
     	}
     });
 
 })(jQuery);
+

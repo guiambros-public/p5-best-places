@@ -6,5 +6,11 @@ var app = app || {};
     'use strict';
 
     // kick things off by creating the `App`
-    new app.AppView();
-});
+    console.log("Appview created");
+
+    // Create the view in jQuery's DOMReady
+    $(function(){
+        new app.AppView();
+    });
+
+})();
