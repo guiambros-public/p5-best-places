@@ -9,9 +9,8 @@
 
     <script src="js/jquery.js"></script>
     <script src="js/underscore.js"></script>
-    <script src="js/bootstrap.js"></script>
     <script src="js/backbone.js"></script>
-    <script src="js/backbone.localStorage.js"></script>
+    <script src="js/bootstrap.js"></script>
     <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places"></script>
 
     <script src="js/model.js"></script>
@@ -37,39 +36,49 @@
     <h2 id="header-title">Oh, The Places You'll Go &ndash; NYC Edition</h2>
 </div>
 
-<div id="wrapper">
+<div id="page-wrapper">
 
-  <div id="listview-wrapper" class="col-md-3">
-            <div id="listview-title">
-                Explore the coolest places in NYC:
-            </div>
-            <div id="listview">
-                <ul class="nav list-group" id="list-group">
-                    <script type="text/template" id="sidebar-item-template">
-                        <li><a class="list-group-item" href="#"><%= name %></a></li>
-                    </script>
-                    <li><a class="list-group-item" href="#">Sidebar Item 2</a></li>
-                    <li><a class="list-group-item" href="#">Sidebar Item 3</a></li>
-                    <li><a class="list-group-item" href="#">Sidebar Item 4</a></li>
-                    <li><a class="list-group-item" href="#">Sidebar Item 5</a></li>
-                </ul>
-                <div id="padding-bottom">
-                </div>
-            </div>
+    <div id="sidebar-wrapper" class="col-md-3">
+        <div id="sidebar-title">
+            Explore the coolest places in NYC:
         </div>
 
-        <div id="mapview-wrapper" class="col-md-9 pull-right">
-            <div id="mapview">
-              <div class="page-header">
-              </div>
+        <div id="sidebar">
+            <div id="sidebar-container">
+            </div>
+            <div id="siderbar-padding-bottom">
+            </div>
+        </div>
+    </div>
+
+    <div id="middle-wrapper" class="col-md-9 pull-right">
+        <div id="middle-wrapper-body">
+            <div id="page-header" class="col-md-12">
+            This is the main Page Header
+            </div>
+            <div id="description-box" class="col-md-4">
+                <img src="">
+            </div>
+            <div id="mapview-wrapper" class="col-md-8">
                 <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3025.1657941475432!2d-73.98527129999997!3d40.6923461!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25a4b0d52345d%3A0x3cbb275875c9697!2s365+Bridge+St%2C+Brooklyn%2C+NY+11201!5e0!3m2!1sen!2sus!4v1432268443864" width="400" height="400" frameborder="0" style="border:0"></iframe>
             </div>
         </div>
+    </div>
 </div>
+
+<script type="text/template" id="sidebar-item-template">
+    <% app.places.each(function(item, index, list) { %>
+        <div class="list-group">
+            <a href="#" class="list-group-item active">
+                <h4 class="list-group-item-heading"><div class="list-group-item-title"><%= item.get("name") %></div></h4>
+                <p class="list-group-item-text"><%= item.get("address") %></p>
+                <% console.log(">>JSON: " + item.get("address")); %>
+            </a>
+        </div>
+    <% }); %>
+</script>
 
 
 </body>
 </html>
-
-
 

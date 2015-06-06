@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Udacity Project P5 - 50 Best Places in NYC</title>
+
+    <script src="js/jquery.js"></script>
+    <script src="js/underscore.js"></script>
+    <script src="js/backbone.js"></script>
+
+    <script type="text/javascript">
+      // overcome the problem with Chrome, that doesn't refresh the page when mouse is not over the viewport
+      setInterval(function(){
+        document.getElementsByTagName('body')[0].focus();
+      }, 250);
+    </script>
+
+</head>
+
+<body>
+
+    This is the container:
+    <hr>
+    <div id="todo-container">
+    </div>
+    <hr>
+
+    <br><br><br>
+    This is the template:
+    <hr>
+    <script type="text/template" id="todo_template">
+        <label><%= search_label %></label>
+        <hr>
+        <label><%- todo_model.get("title") %></label>
+        <input type="text" id="search_input" />
+        <input type="button" id="search_button" value="Search" />
+    </script>
+    <hr>
+
+    <script src="js/model.js"></script>
+    <script src="js/views.js"></script>
+    <script src="js/app.js"></script>
+
+</body>
+</html>
+
+
+

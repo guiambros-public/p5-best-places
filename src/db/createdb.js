@@ -25,6 +25,7 @@ function read_db() {
         $ = cheerio.load(item.content);
         var c = $("p").first().text().replace(/(\r\n|\n|\r)/gm, "").replace(/(\ )/gm, " "); // clean string, remove cr/lf
         var p = {
+            'name': "",
             'address': "",
             'website': "",
             'neighborhood': "",
@@ -32,6 +33,7 @@ function read_db() {
             'description': "",
             'favorite': false
         };
+        p.name         = item.headline;
         p.address      = c.match("Address\:\ (.*)Website")[1];
         p.website      = c.match("Website\:\ (.*)")[1];
         p.neighborhood = c.match("Neighborhood\:\ (.*)Address")[1];
