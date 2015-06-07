@@ -45,15 +45,12 @@ body {
   overflow-y: auto;
   padding: 90px 0 0px 0;
   background: #FFAAAA;
+  max-width: 400px;
 }
 
-#sidebar-title {
-  padding: 0px 0px 10px 30px;
-}
-
-#sidebar {
-  position: relative;
-  height: 100%;
+#sidebar,#sidebar-title {
+/*  position: relative;*/
+/*  height: 100%;*/
   padding: 0px 30px 30px 30px;
 }
 
@@ -62,8 +59,12 @@ body {
 }
 
 .list-group-item-title {
-  color: #F0F0F0;
+  color: #444;
   font-weight: bold;
+}
+
+.list-group-item.active {
+  background: linear-gradient(to bottom,#5cb85c 0,#419641 100%);
 }
 
 
@@ -87,7 +88,7 @@ body {
 #page-header {
   font-size: 20px;
   height: 100%;
-  padding: 50px 0px 50px 30px;
+  padding: 20px 0px 20px 30px;
   border-right: 1px solid gray;
   background: #00FFFF;
 }
@@ -99,39 +100,94 @@ body {
   width: 30%;
   border-style: solid;
   border-width: 10px;
-  border-color: black;
-
+  border-color: gray;
+  font-size: 15px;
+  line-height: 120%;
 }
 
+#image-box {
+  max-width: 300px;
+  margin: 0 0 20px 0;
+}
 #mapview-wrapper {
-  background: #A0A0A0;
+  background: #A04040;
   margin: 10px 10px 10px 10px;
   width: 60%;
+  border-style: solid;
+  border-width: 10px;
+  border-color: gray;
 }
 
 .list-group-item {
   border: 0;
 }
 
+/* Large desktops and laptops */
+@media (min-width: 1200px) {
 
-/*
-@media (min-width: 992px) {
-  #listview-wrapper {
-    float:left;
-  }
 }
-@media (max-width: 992px) {
-  #listview-wrapper {
-    padding-top: 0px;
-  }
-}
-@media (max-width: 992px) {
-  #mapview-wrapper {
-    position: static;
-    height:auto;
-    max-height: 300px;
-    border-right:0;
-  }
-}
-*/
 
+/* Landscape tablets and medium desktops */
+@media (min-width: 992px) and (max-width: 1199px) {
+  #sidebar-wrapper {
+    max-width: 300px;
+  }
+
+  #sidebar,#sidebar-title {
+    padding: 0px 20px 20px 20px;
+  }
+}
+
+/* Portrait tablets and small desktops */
+@media (min-width: 768px) and (max-width: 991px) {
+  #sidebar-wrapper {
+    max-width: 250px;
+  }
+
+  #sidebar,#sidebar-title {
+    padding: 0px 15px 15px 15px;
+  }
+}
+
+/* Landscape phones and portrait tablets */
+@media (max-width: 767px) {
+  #sidebar-wrapper {
+    max-width: 200px;
+  }
+
+  #sidebar,#sidebar-title {
+    padding: 0px 10px 10px 10px;
+  }
+}
+
+
+/* Portrait phones and smaller */
+@media (max-width: 480px) {
+  #sidebar-wrapper {
+    max-width: 100px;
+  }
+
+  #sidebar,#sidebar-title {
+    padding: 0px 0px 0px 0px;
+  }
+
+  #sidebar-title {
+    visibility: hidden;
+  }
+
+  h4,p{
+    font-size: 12px;
+  }
+
+  .list-group {
+    margin-bottom: 5px;
+  }
+
+  .list-group-item-title {
+    font-weight: normal;
+  }
+
+  .list-group-item {
+    padding: 5px 5px;
+  }
+}

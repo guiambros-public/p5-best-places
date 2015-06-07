@@ -42,7 +42,6 @@
         <div id="sidebar-title">
             Explore the coolest places in NYC:
         </div>
-
         <div id="sidebar">
             <div id="sidebar-container">
             </div>
@@ -57,7 +56,8 @@
             This is the main Page Header
             </div>
             <div id="description-box" class="col-md-4">
-                <img src="">
+                <img src="" id="image-box">
+                <div id="description-text"></div>
             </div>
             <div id="mapview-wrapper" class="col-md-8">
                 <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3025.1657941475432!2d-73.98527129999997!3d40.6923461!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25a4b0d52345d%3A0x3cbb275875c9697!2s365+Bridge+St%2C+Brooklyn%2C+NY+11201!5e0!3m2!1sen!2sus!4v1432268443864" width="400" height="400" frameborder="0" style="border:0"></iframe>
@@ -69,7 +69,7 @@
 <script type="text/template" id="sidebar-item-template">
     <% app.places.each(function(item, index, list) { %>
         <div class="list-group">
-            <a href="#" class="list-group-item active">
+            <a href="#" class="list-group-item" data-id="<%= index %>">
                 <h4 class="list-group-item-heading"><div class="list-group-item-title"><%= item.get("name") %></div></h4>
                 <p class="list-group-item-text"><%= item.get("address") %></p>
                 <% console.log(">>JSON: " + item.get("address")); %>
