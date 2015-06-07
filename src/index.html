@@ -4,30 +4,29 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <title>Udacity Project P5 - 50 Best Places in NYC</title>
 
     <script src="js/jquery.js"></script>
     <script src="js/underscore.js"></script>
     <script src="js/backbone.js"></script>
     <script src="js/bootstrap.js"></script>
-    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places"></script>
-
+    <script type="text/javascript" src='http://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyCx-9twHn2bYrasU_59Cn8J-OSzRD0Lkh4&libraries=places&signed_in=true'></script>
     <script src="js/model.js"></script>
     <script src="js/views.js"></script>
     <script src="js/app.js"></script>
-
 
     <link href="css/bootstrap.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet" type="text/css">
 
     <script type="text/javascript">
-      // overcome the problem with Chrome, that doesn't refresh the page when mouse is not over the viewport
-      setInterval(function(){
-        document.getElementsByTagName('body')[0].focus();
-      }, 250);
+        // LiveReload hack refresh.
+        // Fixes the issue with Chrome, not refresh the page unless when mouse is over the viewport
+        //
+        console.log(setInterval(function(){
+            document.getElementsByTagName('body')[0].focus();
+        }, 250));
     </script>
-
 </head>
 
 <body>
@@ -59,8 +58,7 @@
                 <img src="" id="image-box">
                 <div id="description-text"></div>
             </div>
-            <div id="mapview-wrapper" class="col-md-8">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3025.1657941475432!2d-73.98527129999997!3d40.6923461!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25a4b0d52345d%3A0x3cbb275875c9697!2s365+Bridge+St%2C+Brooklyn%2C+NY+11201!5e0!3m2!1sen!2sus!4v1432268443864" width="400" height="400" frameborder="0" style="border:0"></iframe>
+            <div id="map-canvas" class="col-md-8">
             </div>
         </div>
     </div>
@@ -72,7 +70,6 @@
             <a href="#" class="list-group-item" data-id="<%= index %>">
                 <h4 class="list-group-item-heading"><div class="list-group-item-title"><%= item.get("name") %></div></h4>
                 <p class="list-group-item-text"><%= item.get("address") %></p>
-                <% console.log(">>JSON: " + item.get("address")); %>
             </a>
         </div>
     <% }); %>

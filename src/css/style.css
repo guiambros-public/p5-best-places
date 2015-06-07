@@ -95,7 +95,7 @@ body {
 
 #description-box {
   background: #FFFF00;
-  height: 500px;
+  height: 600px;
   margin: 10px 10px 10px 10px;
   width: 30%;
   border-style: solid;
@@ -109,10 +109,12 @@ body {
   max-width: 300px;
   margin: 0 0 20px 0;
 }
-#mapview-wrapper {
+
+#map-canvas {
   background: #A04040;
   margin: 10px 10px 10px 10px;
   width: 60%;
+  height: 600px;
   border-style: solid;
   border-width: 10px;
   border-color: gray;
