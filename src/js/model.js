@@ -25,11 +25,13 @@ var app = app || {};
     var Places = Backbone.Collection.extend({
         model: Place,
 
+        status: {},
+
         initialize: function () {
             console.log ("Initializing collection Places");
-            Places.this = this;
+            var _thisModel = this;
 
-            $.getJSON("db/data.json", function (data) {
+            this.status = $.getJSON("db/data.json", function (data) {
                 $.each(data, function(key) {
                     var m = new Place ( {
                             "id": key,
@@ -39,23 +41,12 @@ var app = app || {};
                             "image": data[key].image,
                             "description": data[key].description
                         } );
-                    Places.this.add(m);
+                    _thisModel.add(m);
                 });
-            })
-                .done(function(){
-                    console.log("SUCCESS loading JSON file");
-                })
-                .fail(function(){
-                    console.log("ERROR loading JSON file");
-                })
-                .always(function(){
-                    console.log("Finished trying to load JSON file...");
-                });
+            });
         },
 
     });
 
     app.places = new Places();
 })();
-
-
