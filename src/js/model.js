@@ -22,7 +22,7 @@ var app = app || {};
         }
     });
 
-    var Places = Backbone.Collection.extend({
+    var PlacesCollection = Backbone.Collection.extend({
         model: Place,
 
         status: {},
@@ -48,5 +48,5 @@ var app = app || {};
 
     });
 
-    app.places = new Places();
+    app.places = new PlacesCollection();
 })();

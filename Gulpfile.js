@@ -62,7 +62,10 @@ var paths = {
     db: [
          'db/*.js'
         ,'db/*.html'
-    ]
+    ],
+    others: [
+        '**/*.ico'
+    ],
 };
 
 // Aux function. Append SRC prefix to paths specified above
@@ -82,12 +85,13 @@ function sourceDir(path_array) {
 gulp.task('default',
     [
     //'lint',
-    'minify_js',
-    'minify_html',
-    'minify_css',
-    'create_db',
-    'compress_images',
-    'test_jasmine'
+    'minify_js'
+    ,'minify_html'
+    ,'minify_css'
+    ,'create_db'
+    ,'compress_images'
+    ,'test_jasmine'
+    ,'others'
     ,'watch' //optional, if you want Gulp to keep monitoring your folders
     ],  function() {
     // nothing
@@ -143,9 +147,17 @@ gulp.task('compress_images', function() {
     .pipe(livereload());
 });
 
+gulp.task('others', function () {
+    return gulp.src( sourceDir(paths.others) )
+    .pipe( gulp.dest( DEST ) );
+});
+
+// -------
+
+
 gulp.task('test_jasmine', function () {
     return gulp.src( SRC + '/spec/test.js' )
-        .pipe( jasmine() );
+    .pipe( jasmine() );
 });
 
 gulp.task('watch', function() {

@@ -12,8 +12,10 @@ var app = app || {};
         map: {},
 
         initialize: function () {
+            _.bindAll(this, 'filter_results');
             console.log( "View / initialize() - starting" );
             this.listenTo(app.places, "change", this.render);
+            $('#search-box').keypress( this.filter_results );
             this.render();
             this.map = new Map();
             this.map.config.el_id = "map-canvas";
@@ -50,5 +52,16 @@ var app = app || {};
 
             this.map.search( name, item );
         },
+
+        filter_results: function(e) {
+            console.log ( "key pressed - " + e.which );
+
+            //if (e.which === ENTER_KEY && this.$input.val().trim()) {
+                //app.todos.create(this.newAttributes());
+                //this.$input.val('');
+            //    console.log ( "ENTER pressed" );
+            //};
+        },
+
     });
 })(jQuery);
