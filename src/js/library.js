@@ -194,3 +194,27 @@ var Foursquare = (function () {
         get_reviews: get_reviews
     };
 });
+
+
+
+// Filtered Collection Decorator pattern, by Derick Bailey
+// http://spin.atomicobject.com/2013/08/08/filter-backbone-collection/
+//
+var filteredCollection = function(original, filterFn) {
+
+    var filtered;
+    filtered = new original.constructor();
+    filtered._callbacks = {};   // Remove events associated with original
+
+    filtered.filterItems = function(filter) {
+        var items;
+        items = original.filter(filter);
+        filtered._currentFilter = filterFn;
+        return filtered.reset(items);
+    };
+
+    original.on('reset change destroy', function() {     // Refilter when original collection is modified
+        return filtered.filterItems(filtered._currentFilter);
+    });
+    return filtered.filterItems(filterFn);
+};

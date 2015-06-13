@@ -29,7 +29,7 @@ var app = app || {};
 
         initialize: function () {
             console.log ("Initializing collection Places");
-            var _thisModel = this;
+            var _thisObject = this;  // retains the context of the parent collection object
 
             this.status = $.getJSON("db/data.json", function (data) {
                 $.each(data, function(key) {
@@ -41,7 +41,7 @@ var app = app || {};
                             "image": data[key].image,
                             "description": data[key].description
                         } );
-                    _thisModel.add(m);
+                    _thisObject.add(m);
                 });
             });
         },

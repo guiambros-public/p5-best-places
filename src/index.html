@@ -67,7 +67,7 @@
 </div>
 
 <script type="text/template" id="sidebar-item-template">
-    <% app.places.each(function(item, index, list) { %>
+    <% app.placesFiltered.each(function(item, index, list) { %>
         <div class="list-group">
             <a href="#" class="list-group-item" data-id="<%= index %>">
                 <h4 class="list-group-item-heading"><div class="list-group-item-title"><%= item.get("name") %></div></h4>
