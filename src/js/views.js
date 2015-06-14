@@ -34,11 +34,11 @@ var app = app || {};
 	},
 
     	render: function () {
-            var content_generator = _.template( $("#sidebar-item-template").html() );
-            this.$el.html( content_generator() );
+            var template_fn = _.template( $("#sidebar-item-template").html() );
+            this.$el.html( template_fn() );
 
-            content_generator = _.template( $("#sidebar-title-template").html() );
-            $("#sidebar-title").html( content_generator() );
+            template_fn = _.template( $("#sidebar-title-template").html() );
+            $("#sidebar-title").html( template_fn() );
             return this;
         },
 
@@ -95,6 +95,9 @@ References:
 
 - Inspiration for the shadow markers
   http://www.foodspotting.com/find/within/40.74368139882518,-73.99250956170653/40.769687713159634,-73.91182871453856
+
+- Creating SVG images in pure CSS/HTML
+  http://metafizzy.co/blog/making-svg-buttons/
 
 
 */

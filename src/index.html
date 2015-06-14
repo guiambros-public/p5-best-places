@@ -65,7 +65,6 @@
             <div id="description-box" class="col-md-4">
                 <img src="" id="image-box">
                 <div id="description-text"></div>
-                <img src="" id="4sq-icon">
             </div>
             <div id="map-canvas" class="col-md-8">
             </div>
@@ -92,6 +91,50 @@
         }
     %>
     <%= msg %>
+</script>
+
+<script type="text/template" id="map-infowindow-template">
+        <div id="content" class="col-md-12">
+            <div class="col-md-8">
+                <div id="siteNotice"></div>
+                <h1 id="firstHeading" class="firstHeading"><%= name %></h1>
+            </div>
+            <div id="arrows" class="col-md-4">
+                <div class="arrow-left">
+                    <svg viewbox="0 0 100 100">
+                        <path class="arrow" d="M 50,0 L 60,10 L 20,50 L 60,90 L 50,100 L 0,50 Z" />
+                    </svg>
+                </div>
+                <div class="arrow-right">
+                    <svg viewbox="0 0 100 100">
+                        <path class="arrow" d="M 50,0 L 60,10 L 20,50 L 60,90 L 50,100 L 0,50 Z" transform="translate(85,100) rotate(180) " />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div id="bodyContent" class="col-md-12">
+            <p>
+                <b>[ TIP x/<%= total_tips %>, by <%= (tip.user.firstName ? tip.user.firstName : "") %> <%= tip.user.lastName ? tip.user.lastName : "" %>]</b>
+                <h3><%= tip.text %></h3>
+            </p>
+            <p>Source: Foursquare, <a href="<%= tip.canonicalUrl %>"><%= tip.canonicalUrl %></a> (posted on <%= tip.createdAt %>).</p>
+        </div>
+
+
+</script>
+
+
+
+
+<script type="text/template" id="map-infowindow-template-error">
+        <div id="content">
+            <div id="siteNotice"></div>
+            <h1 id="firstHeading" class="firstHeading">Not found on Foursquare</h1>
+        </div>
+</script>
+
+<script type="text/template" id="not-used">
 </script>
 
 </body>

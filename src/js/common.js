@@ -83,9 +83,6 @@ var Map = (function () {
 
 
     // Create map markers
-    //
-    // When clicked, show information from Google Places (reviews) and + FourSquare's API
-    //
     var createMarker = function( loc_obj, name ) {
 
         marker.setMap(null);                        // remove previous markers
@@ -130,6 +127,8 @@ var Map = (function () {
                 icon = "";  // use default icon marker, instead of foursquare's personalized icon
             })
             .always(function( venue, tips ){
+
+                // create a new marker
                 marker = new google.maps.Marker({
                     map: map,
                     position: loc_obj.geometry.location,
@@ -139,54 +138,46 @@ var Map = (function () {
                 });
 
                 // add click event to marker, but only if we have foursquare information to show
-                if (fsq_success) {
-                    google.maps.event.addListener( marker, 'click', function() {
-                        service.getDetails( loc_obj, function( result, status ) {
-                            if ( status != google.maps.places.PlacesServiceStatus.OK ) {
-                                alert( status );
-                                console.warn ( "Error on getDetails(). Reason: [" + status + "]" );
-                                return;
-                            }
-                            app.e = tips;
+                google.maps.event.addListener( marker, 'click', function() {
+                    service.getDetails( loc_obj, function( result, status ) {
+                        if ( status != google.maps.places.PlacesServiceStatus.OK ) {
+                            alert( status );
+                            console.warn ( "Error on getDetails(). Reason: [" + status + "]" );
+                            return;
+                        }
+
+                        var content_string = "";
+                        if (fsq_success) {
                             var i = 4;
-                            var tot_tips = Math.min( config.max_tips, tips.response.tips.count);
+                            var total_tips = Math.min( config.max_tips, tips.response.tips.count);
                             var tip = tips.response.tips.items[i];
-                            var contentString =
-                                '<div id="content"><div id="siteNotice"></div>' +
-                                '<h1 id="firstHeading" class="firstHeading">' + result.name + '</h1>'+
-                                '<div id="bodyContent">'+
-                                '<p><b>[ TIP x/' + tot_tips +', by ' + (tip.user.firstName ? tip.user.firstName : "") + ' ' + ( tip.user.lastName ? tip.user.lastName :
-                                "" ) + ']</b> ' +
-                                tip.text +
-                                '</p>'+
-                                '<p>Attribution: Foursquare, <a href="' + tip.canonicalUrl + '">' +
-                                tip.canonicalUrl + '</a>'+
-                                ' (posted ' + tip.createdAt + ').</p>'+
-                                '</div>'+
-                                '</div>';
-                            //infownd.setContent( result.name + " - " + tips.response.tips.count );
-                            infownd.setContent( contentString );
-                            infownd.open( map, marker );
+                            var data_bag = {
+                                name: result.name,
+                                tip: tip,
+                                total_tips: total_tips
+                            }
+                            var template_fn = _.template( $("#map-infowindow-template").html());
+                            content_string = template_fn(data_bag);
+                        }
+                        else {
+                            var template_fn = _.template( $("#map-infowindow-template-error").html());
+                            content_string = template_fn();
+                        };
+
+                        infownd.setContent( content_string );
+                        infownd.open( map, marker );
+                        debugger;
+                        $(".arrow-left").click(function(){
+                            alert("left click");
                         });
+                        $(".arrow-right").on('click', function(){
+                            alert("right click");
+                        });
+
                     });
-                };
+                });
             });
     };
-
-//        google.maps.event.addListener(b, "click", function() {
-//            b.map.infowindow.setContent(
-//                '<div style="width: 300px"><a href="' + e.url + '" target="_new"><img src="' +
-//                 e.thumb_90 +
-//                 '" style="float:left;margin-right:10px"></a> <p style="line-height: 15px"><strong style="font-size:110%">' +
-//                 e.item +
-//                 '</strong><br /><small style="color: #777;font-weight:bold;">@ ' +
-//                 e.place + "</small></p> <address>" +
-//                 e.full_address + "</address></div>");
-//            b.map.infowindow.open(b.map, b)
-//        }, this);
-
-
-
 
     return {
         config: config,

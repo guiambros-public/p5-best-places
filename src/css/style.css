@@ -196,6 +196,35 @@ input[type="checkbox"] + label span {
   border: 0;
 }
 
+#content {
+  font-weight: normal;
+
+}
+
+/* arrows */
+#arrows {
+  width: 80px;
+  vertical-align: bottom;
+  margin: 25px;
+}
+
+.arrow-left,
+.arrow-right
+{
+  margin: 0px 0px 0px 5px;
+  background: #EEE;
+  float: left;
+  width: 20px;
+  vertical-align: bottom;
+}
+
+.arrow {
+  fill: #666;
+}
+
+
+
+
 /*
     large desktops and laptops
 */
