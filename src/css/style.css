@@ -16,67 +16,138 @@ body {
   font-smoothing: antialiased;
 }
 
-/*--- header & page structure ---*/
+/*
+    header & page structure
+*/
 #header {
   color: #4d4d4d;
   border-radius: inherit;
-  padding-left: 50px;
+  padding-left: 20px;
   background: #5f5f5f;
 }
 
 #header-title {
   color: #fff;
+  font-size: 30px;
 }
 
-#page-wrapper {
+#page {
   min-height: 100%;
   height: 100%;
   width: 100%;
   position: absolute;
-  top: 0px;
+  top: 0;
   left: 0;
   display: inline-block;
 }
 
 
-/*--- sidebar ---*/
+/*
+    sidebar with smooth scrolling on touch devices
+    source https://css-tricks.com/snippets/css/momentum-scrolling-on-ios-overflow-elements/
+*/
 #sidebar-wrapper {
   height: 100%;
-  overflow-y: auto;
-  padding: 90px 0 0px 0;
+  overflow-y: scroll;
+  padding: 90px 0 0 0;
   background: #FFAAAA;
   max-width: 400px;
+  -webkit-overflow-scrolling: touch;
+  border: solid 5px #00ff00;
 }
 
-#sidebar,#sidebar-title {
-/*  position: relative;*/
-/*  height: 100%;*/
-  padding: 0px 30px 30px 30px;
+/*
+    search-box - source: http://callmenick.com/post/various-css-input-text-styles
+*/
+#search-wrapper {
+  margin: 0px 0 0 15px;
+  font-family: sans-serif;
+  font-size: 16px;
+  appearance: none;
+  box-shadow: none;
+  border-radius: none;
+  display: block;
+}
+
+input[type="text"] {
+  width: 95%;
+}
+
+input[type="text"]:focus {
+  outline: none;
+}
+
+.style-1 input[type="text"] {
+  padding: 5px;
+  border: solid 1px #dcdcdc;
+  transition: box-shadow 0.3s, border 0.3s;
+}
+
+.style-1 input[type="text"]:focus,
+.style-1 input[type="text"].focus {
+  border: solid 1px #707070;
+  box-shadow: 0 0 5px 1px #969696;
+}
+
+input[type="checkbox"] + label span {
+    display:inline-block;
+    margin:-1px 4px 0 0;
+    vertical-align:middle;
+    cursor:pointer;
+    font-size: 14px;
+    font-weight: normal;
+}
+
+
+/*
+
+*/
+
+#sidebar-title {
+  position: relative;
+  padding: 20px 30px 0px 10px;
+  font-size: 20px;
+  font-weight: normal;
+}
+
+#listview {
+  position: relative;
+  padding: 10px 10px 10px 10px;
 }
 
 #siderbar-padding-bottom {
   height: 50px;
 }
 
-.list-group-item-title {
-  color: #444;
-  font-weight: bold;
-}
-
 .list-group-item.active {
   background: linear-gradient(to bottom,#5cb85c 0,#419641 100%);
 }
 
-
-/*--- middle-right ---*/
-
-#middle-wrapper {
-  height: 100%;
-  padding: 50px 0 0px 0;
-  border-right: 1px solid gray;
-  background: #00FF00;
+.listview-title {
+  color: #444;
+  font-weight: bold;
 }
 
+.list-group-item.active .listview-title {
+  color: #FFF;
+}
+
+.listview-address {
+  margin-bottom: 0;
+  line-height: 1.3;
+}
+
+/*
+    middle-right
+*/
+#body-wrapper {
+  height: 100%;
+  padding: 50px 0 0 0;
+  background: #00FF00;
+  border: solid 5px #ff5500;
+}
+
+/*
 #middle-wrapper-bodyx {
   position: relative;
   height: 100%;
@@ -84,58 +155,14 @@ body {
   padding: 0 0 0 10px;
   background: #FFFF00;
 }
+*/
 
 #page-header {
   font-size: 20px;
   height: 200%;
-  padding: 60px 0px 60px 30px;
+  padding: 60px 0 60px 30px;
   border-right: 1px solid gray;
   background: #00FFFF;
-}
-
-#search-box,
-.edit {
-  position: relative;
-  margin: 0 0 0 30px;
-  width: 50%;
-  font-size: 24px;
-  font-family: inherit;
-  font-weight: inherit;
-  line-height: 1.4em;
-  border: 2;
-  outline: solid;
-  color: white;
-  padding: 6px;
-  border: 1px solid #240;
-  box-shadow: inset 0 -1px 5px 0 rgba(0, 0, 0, 0.2);
-  box-sizing: border-box;
-  -webkit-font-smoothing: antialiased;
-  -moz-font-smoothing: antialiased;
-  font-smoothing: antialiased;
-}
-
-#search-box {
-  padding: 16px 16px 16px 60px;
-  border: none;
-  background: rgba(40, 40, 0, 0.3);
-  box-shadow: inset 0 -2px 1px rgba(0,0,0,0.03);
-}
-
-
-::-webkit-input-placeholder {
-   color: red;
-}
-
-:-moz-placeholder { /* Firefox 18- */
-   color: red;
-}
-
-::-moz-placeholder {  /* Firefox 19+ */
-   color: red;
-}
-
-:-ms-input-placeholder {
-   color: red;
 }
 
 #description-box {
@@ -169,53 +196,63 @@ body {
   border: 0;
 }
 
-/* Large desktops and laptops */
+/*
+    large desktops and laptops
+*/
 @media (min-width: 1200px) {
 
 }
 
-/* Landscape tablets and medium desktops */
+/*
+    landscape tablets and medium desktops
+*/
 @media (min-width: 992px) and (max-width: 1199px) {
   #sidebar-wrapper {
     max-width: 300px;
   }
 
   #sidebar,#sidebar-title {
-    padding: 0px 20px 20px 20px;
+    padding: 0 20px 20px 20px;
   }
 }
 
-/* Portrait tablets and small desktops */
+/*
+    portrait tablets and small desktops
+*/
 @media (min-width: 768px) and (max-width: 991px) {
   #sidebar-wrapper {
     max-width: 250px;
   }
 
   #sidebar,#sidebar-title {
-    padding: 0px 15px 15px 15px;
+    padding: 0 15px 15px 15px;
   }
 }
 
-/* Landscape phones and portrait tablets */
+/*
+    landscape phones and portrait tablets
+*/
 @media (max-width: 767px) {
   #sidebar-wrapper {
     max-width: 200px;
   }
 
   #sidebar,#sidebar-title {
-    padding: 0px 10px 10px 10px;
+    padding: 0 10px 10px 10px;
   }
 }
 
 
-/* Portrait phones and smaller */
+/*
+    portrait phones and smaller
+*/
 @media (max-width: 480px) {
   #sidebar-wrapper {
     max-width: 100px;
   }
 
   #sidebar,#sidebar-title {
-    padding: 0px 0px 0px 0px;
+    padding: 0 0 0 0;
   }
 
   #sidebar-title {
@@ -226,11 +263,11 @@ body {
     font-size: 12px;
   }
 
-  .list-group {
+  .listview-group {
     margin-bottom: 5px;
   }
 
-  .list-group-item-title {
+  .listview-title {
     font-weight: normal;
   }
 

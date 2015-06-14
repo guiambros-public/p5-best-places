@@ -118,13 +118,14 @@ gulp.task('minify_html', function() {
     .pipe( changed(DEST) )
     .pipe( gulpif( COMPRESS, minifyHTML({
         conditionals: true,
-        spare:true })))
+        spare: true })))
     .pipe( gulp.dest( DEST ) )
     .pipe(livereload());
 });
 
 gulp.task('minify_css', function() {
     return gulp.src( sourceDir(paths.css) )
+    .pipe( changed( DEST ) )
     .pipe( gulpif( COMPRESS, minifyCSS( { keepBreaks:true } ) ) )
     .pipe( gulp.dest( DEST + "/css" ) )
     .pipe(livereload());

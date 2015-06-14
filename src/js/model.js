@@ -3,7 +3,6 @@ var app = app || {};
 
 (function () {
     'use strict';
-    console.log ("Running model.js");
 
     var Place = Backbone.Model.extend({
         defaults: {
@@ -18,7 +17,7 @@ var app = app || {};
             favorite: false
         },
         initialize: function(vals){
-            void 0;
+            //
         }
     });
 
@@ -28,7 +27,6 @@ var app = app || {};
         status: {},
 
         initialize: function () {
-            console.log ("Initializing collection Places");
             var _thisObject = this;  // retains the context of the parent collection object
 
             this.status = $.getJSON("db/data.json", function (data) {
@@ -45,7 +43,6 @@ var app = app || {};
                 });
             });
         },
-
     });
 
     app.places = new PlacesCollection();

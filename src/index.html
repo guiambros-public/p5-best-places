@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <title>Udacity Project P5 - 50 Best Places in NYC</title>
+    <title>Udacity Project P5 - Best Places in NYC</title>
 
     <script src="js/jquery.js"></script>
     <script src="js/underscore.js"></script>
@@ -14,8 +14,10 @@
     <script type="text/javascript" src='http://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyCx-9twHn2bYrasU_59Cn8J-OSzRD0Lkh4&libraries=places&signed_in=true'></script>
     <script src="js/model.js"></script>
     <script src="js/views.js"></script>
-    <script src="js/library.js"></script>
+    <script src="js/common.js"></script>
     <script src="js/app.js"></script>
+</head>
+
 
     <link href="css/bootstrap.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet" type="text/css">
@@ -24,41 +26,46 @@
         // LiveReload hack refresh.
         // Fixes the issue with Chrome, not refresh the page unless when mouse is over the viewport
         //
-        console.log(setInterval(function(){
+        setInterval(function(){
             document.getElementsByTagName('body')[0].focus();
-        }, 250));
+        }, 250);
     </script>
 </head>
 
 <body>
 
 <div id="header" class="navbar navbar-default navbar-fixed-top header">
-    <h2 id="header-title">Oh, The Places You'll Go &ndash; NYC Edition</h2>
+    <h2 id="header-title">Best 50 Places in NYC</h2>
 </div>
 
-<div id="page-wrapper">
+<div id="page">
 
     <div id="sidebar-wrapper" class="col-md-3">
-        <div id="sidebar-title">
-            Explore the coolest places in NYC:
+        <div class="input-list style-1 clearfix" id="search-wrapper">
+            <input id="search-box" type="text" placeholder="search for places or addresses" autofocus>
+            <br><input id="search-checkbox" type="checkbox">
+                <label for="search-checkbox"><span>search inside descriptions</span></label>
         </div>
-        <div id="sidebar">
-            <div id="sidebar-container">
+
+        <div id="sidebar-title">
+        </div>
+        <div id="listview">
+            <div id="destinations-container">
             </div>
-            <div id="siderbar-padding-bottom">
+            <div id="sidebar-padding-bottom">
             </div>
         </div>
     </div>
 
-    <div id="middle-wrapper" class="col-md-9 pull-right">
-        <div id="middle-wrapper-body">
+    <div id="body-wrapper" class="col-md-9">
+        <div>
             <div id="page-header" class="col-md-12">
                 This is the main Page Header
-                    <input id="search-box" placeholder="Which place are you looking for?" autofocus>
             </div>
             <div id="description-box" class="col-md-4">
                 <img src="" id="image-box">
                 <div id="description-text"></div>
+                <img src="" id="4sq-icon">
             </div>
             <div id="map-canvas" class="col-md-8">
             </div>
@@ -70,14 +77,22 @@
     <% app.placesFiltered.each(function(item, index, list) { %>
         <div class="list-group">
             <a href="#" class="list-group-item" data-id="<%= index %>">
-                <h4 class="list-group-item-heading"><div class="list-group-item-title"><%= item.get("name") %></div></h4>
-                <p class="list-group-item-text"><%= item.get("address") %></p>
+                <h4><div class="listview-title"><%= item.get("name") %></div></h4>
+                <p class="listview-address"><%= item.get("address") %></p>
             </a>
         </div>
     <% }); %>
 </script>
 
+<script type="text/template" id="sidebar-title-template">
+    <%
+        var msg = "Showing " + app.placesFiltered.length + " great place" + (app.placesFiltered.length > 1 ? "s" : "");
+        if (app.placesFiltered.length == 0) {
+            msg = "No places found";
+        }
+    %>
+    <%= msg %>
+</script>
 
 </body>
 </html>
-
