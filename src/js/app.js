@@ -6,15 +6,18 @@ var app = app || {};
 /*  Checklist:
 
 Required:
-- test for error handling
+- test for error handling on Google Maps
 - mobile friendly
 - comment code
 - readme
 
 For extra credit:
-- autocomplete
 - use of a third API, besides Foursquare and Google Maps
--
+
+
+Done:
+- test for error handling on Foursquare
+
 
 */
 (function () {

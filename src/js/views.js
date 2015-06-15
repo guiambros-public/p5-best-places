@@ -11,7 +11,7 @@ var app = app || {};
         _this: this,
 
         events: {
-            'click a': 'button_click',
+            'click a': 'sidebar_click',
         },
 
         map: {},
@@ -31,7 +31,7 @@ var app = app || {};
             this.map = new Map();
             this.map.config.el_id = "map-canvas";
             this.map.initialize( "40.7504877,-73.9839238" );
-	},
+	   },
 
     	render: function () {
             var template_fn = _.template( $("#sidebar-item-template").html() );
@@ -49,18 +49,43 @@ var app = app || {};
         // and adjust the description box and google maps. #active class is
         // toggled, to simulate the on/off effect
         //
-        button_click: function(e) {
+        sidebar_click: function(e) {
+            // adjust UI to reflect the click
             e.preventDefault();
+            $( "a" ).toggleClass( "active", false );                    // reset everyone
             var clicked_el = $( e.currentTarget );
+            clicked_el.toggleClass( "active", true );                   // mark clicked element as active
+
+            // find the item clicked
             var id = clicked_el.data( "id" );
             var item = app.placesFiltered.models[id];
-            var name = item.get( "name" );
+            var self = this;
 
-            $( "a" ).toggleClass( "active", false );                    // reset everyone
-            clicked_el.toggleClass( "active", true );                   // activate clicked element
-            $( "#image-box" ).attr("src", item.get( "image" ) );        // populate image/description
+            // populate description and image
+            $( "#image-box" ).attr("src", item.get( "image" ) );
             $( "#description-text" ).html( item.get( "description" ) );
-            this.map.search_and_display( name, item );                  // search for address and populate map/marker
+
+            // search Google Maps for address and location
+            var name = item.get( "name" );
+            var place = this.map.search( name, item );                  // search for address
+            place
+                .done( function (place) {
+                    var fsq = new Foursquare();                         // Search Foursquare for the same venue
+                    var fsq_reviews_p = fsq.get_reviews( name, place ); // returns a promise()
+                    fsq_reviews_p
+                        .done(function( venue, tips ){
+                            console.info("FSQ returned succesfully");
+                        })
+                        .fail(function(){
+                            console.warn("FSQ failed");
+                        })
+                        .always(function( venue, tips ){
+                            self.map.createMarker( place, name, venue );
+                        });
+                })
+                .fail( function () {
+                    console.warn("Google failed");
+                });
         },
 
         filter_results: function(e) {
@@ -81,8 +106,6 @@ var app = app || {};
 })(jQuery);
 
 
-
-
 /*
 
 References:
@@ -99,5 +122,10 @@ References:
 - Creating SVG images in pure CSS/HTML
   http://metafizzy.co/blog/making-svg-buttons/
 
+- Filtered Collection Decorator pattern, by Derick Bailey
+  http://spin.atomicobject.com/2013/08/08/filter-backbone-collection/
+
+- Understanding delete
+  http://perfectionkills.com/understanding-delete/
 
 */
