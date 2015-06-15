@@ -5,18 +5,18 @@ var app = app || {};
 
     app.AppView = Backbone.View.extend({
         model: app.placesFiltered,
-
         el: "#destinations-container",
-
         _this: this,
-
         events: {
             'click a': 'sidebar_click',
         },
-
         map: {},
+        self: {},
 
         initialize: function () {
+            // save context for later
+            self = this;
+
             // clone collection for filtering
             app.placesFiltered = new Backbone.Collection( app.places.toJSON() );
             $( '#search-box' ).on( 'input propertychange paste', this.filter_results );
@@ -25,13 +25,13 @@ var app = app || {};
 
             // set up events
             _.bindAll( this, 'filter_results' );
+            _.bindAll( this, 'sidebar_click' );
             app.placesFiltered.on( 'reset', this.render, this );
 
             // initialize Google Map
             this.map = new Map();
-            this.map.config.el_id = "map-canvas";
-            this.map.initialize( "40.7504877,-73.9839238" );
-	   },
+            this.map.initialize ( "map-canvas" );
+	    },
 
     	render: function () {
             var template_fn = _.template( $("#sidebar-item-template").html() );
@@ -59,7 +59,6 @@ var app = app || {};
             // find the item clicked
             var id = clicked_el.data( "id" );
             var item = app.placesFiltered.models[id];
-            var self = this;
 
             // populate description and image
             $( "#image-box" ).attr("src", item.get( "image" ) );
@@ -70,18 +69,19 @@ var app = app || {};
             var place = this.map.search( name, item );                  // search for address
             place
                 .done( function (place) {
-                    var fsq = new Foursquare();                         // Search Foursquare for the same venue
-                    var fsq_reviews_p = fsq.get_reviews( name, place ); // returns a promise()
-                    fsq_reviews_p
-                        .done(function( venue, tips ){
-                            console.info("FSQ returned succesfully");
-                        })
-                        .fail(function(){
-                            console.warn("FSQ failed");
-                        })
-                        .always(function( venue, tips ){
-                            self.map.createMarker( place, name, venue );
-                        });
+//                    var fsq = new Foursquare();                         // Search Foursquare for the same venue
+//                    var fsq_reviews_p = fsq.get_reviews( name, place ); // returns a promise()
+//                    fsq_reviews_p
+//                        .done(function( venue, tips ){
+//                            fsq.venue = venue;
+//                            fsq.tips = tips;
+//                        })
+//                        .fail(function(){
+//                            console.warn("FSQ failed");
+//                        })
+//                        .always(function( venue, tips ){
+//                            self.map.createMarker( place, name, fsq );
+//                        });
                 })
                 .fail( function () {
                     console.warn("Google failed");

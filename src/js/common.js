@@ -10,12 +10,13 @@ var Map = (function () {
                   { "saturation": -32 },
                   { "hue": "#0099ff" }
             ]}],
-        options: {  zoom: 15,
-                    disableDefaultUI: true,
-                    maxZoom: 18,
-                    minZoom: 11,
-                    center: {}
+        options: { zoom: 15,
+                   disableDefaultUI: true,
+                   maxZoom: 18,
+                   minZoom: 11,
+                   center: {}
         },
+
         max_tips: 30
     };
 
@@ -25,7 +26,7 @@ var Map = (function () {
         marker = {},
         marker_shadow = {},
         center_radius_obj = {},
-        tips = {};
+        venue_location = {};
 
     var icon_marker = {
         anchor: new google.maps.Point(16, 42),
@@ -38,24 +39,29 @@ var Map = (function () {
         scaledSize: new google.maps.Size(38, 45)
     };
 
+    var self = {};
 
-    var initialize = function ( init_loc, el ) {
+    var initialize = function ( el ) {
+        // save context, for later use
+        self = this;
+
         // create location object for the center of the radius
         // (used later for search service)
         var loc_array = config.center_radius.split( "," ).map( Number );
         center_radius_obj = new google.maps.LatLng( loc_array[0], loc_array[1] );
 
         // create location object
-        config.location = init_loc || config.location || center_radius || "64.1748683,-51.7382954"; // North Pole, as last case scenario
+        config.location = config.location || config.center_radius || "64.1748683,-51.7382954"; // North Pole, as last option
         var loc_array = config.location.split( "," ).map( Number );
         config.options.center = new google.maps.LatLng( loc_array[0], loc_array[1] );
 
         // create map object
         config.el = el || config.el;
-        map = new google.maps.Map( document.getElementById( config.el_id ), config.options );
+        map = new google.maps.Map( document.getElementById( config.el ), config.options );
+
         map.setOptions( { styles: config.style } );
 
-        // create shell objects
+        // create initial objects
         service = new google.maps.places.PlacesService( map );
         marker  = new google.maps.Marker({});
         marker_shadow  = new google.maps.Marker({});
@@ -97,13 +103,16 @@ var Map = (function () {
 
 
     // Create map markers
-    var createMarker = function( loc_obj, name, fsq_venue ) {
+    var createMarker = function( loc_obj, name, fsq_obj ) {
         marker.setMap(null);                        // remove previous markers
         marker_shadow.setMap(null);
         map.panTo( loc_obj.geometry.location );     // center map
+        venue_location = loc_obj;
+        self.fs = fsq_obj;
 
         // create shadow marker, but only if displaying
-        if (typeof fsq_venue != 'undefined') {
+        if (typeof fsq_obj.tips != 'undefined') {
+
             // create location markers
             marker_shadow = new google.maps.Marker({
                 position: loc_obj.geometry.location,
@@ -112,7 +121,7 @@ var Map = (function () {
                 zIndex: 0,
                 clickable: false,
             });
-            icon_marker.url = fsq_venue.icon_url;
+            icon_marker.url = fsq_obj.venue.icon_url;
 
             marker = new google.maps.Marker({
                 map: map,
@@ -135,40 +144,43 @@ var Map = (function () {
 
     // handle clicks on markers
     var marker_onClick = function() {
-        console.info("Marker_onClick");
-//        service.getDetails( loc_obj, function( result, status ) {
-//            if ( status != google.maps.places.PlacesServiceStatus.OK ) {
-//                alert( status );
-//                console.warn ( "Error on getDetails(). Reason: [" + status + "]" );
-//                return;
-//            }
-//
-//            var content_string = "";
-//            if (fsq_success) {
-//                var i = 4;
-//                var total_tips = Math.min( config.max_tips, tips.response.tips.count);
-//                var tip = tips.response.tips.items[i];
-//                var data_bag = {
-//                    name: result.name,
-//                    tip: tip,
-//                    total_tips: total_tips
-//                }
-//                var template_fn = _.template( $("#map-infowindow-template").html());
-//                content_string = template_fn(data_bag);
-//            }
-//            else {
-//                var template_fn = _.template( $("#map-infowindow-template-error").html());
-//                content_string = template_fn();
-//            };
-//
-//            infownd.setContent( content_string );
-//            infownd.open( map, marker );
-//            $(".arrow-left").click(function(){
-//                alert("left click");
-//            });
-//            $(".arrow-right").on('click', function(){
-//                alert("right click");
-//            });
+        service.getDetails( venue_location, function( result, status ) {
+            if ( status != google.maps.places.PlacesServiceStatus.OK ) {
+                alert( status );
+                console.warn ( "Error on getDetails(). Reason: [" + status + "]" );
+                return;
+            }
+
+            var content_string = "";
+
+            if (typeof self.fs.tips != 'undefined' && self.fs.tips.response.tips.count) {
+
+                var i = Math.min(4, self.fs.tips.response.tips.count-1); // FIXME
+                //debugger;
+                var total_tips = Math.min( config.max_tips, self.fs.tips.response.tips.count);
+                var tip = self.fs.tips.response.tips.items[i];
+                var data_bag = {
+                    name: result.name,
+                    tip: tip,
+                    total_tips: total_tips
+                }
+                var template_fn = _.template( $("#map-infowindow-template" ).html());
+                content_string = template_fn( data_bag );
+            }
+            else {
+                var template_fn = _.template( $("#map-infowindow-template-error" ).html());
+                content_string = template_fn();
+            };
+
+            infownd.setContent( content_string );
+            infownd.open( map, marker );
+            $(".arrow-left").click(function(){
+                alert("left click");
+            });
+            $(".arrow-right").on('click', function(){
+                alert("right click");
+            });
+        });
     };
 
     return {
@@ -198,30 +210,35 @@ var Foursquare = (function () {
     var get_reviews = function( name, loc_obj ) {
         var deferred = new $.Deferred();
 
-        // search for venue using Foursquare API
+        // Try to find the venue on Fourquare
         api_search_venue( name, loc_obj )
             .done( function( v ){
                 venue = v.response.venues[0];
+
+                // Location not found on 4SQ; abort
                 if (typeof venue == 'undefined') {
-                    console.warn("Location not found on Foursquare");
+                    console.warn("Venue was not found on Foursquare; ignoring");
                     deferred.reject();
                 }
+
+                // Location found, proceed
                 else {
-                    // retrieve venue details
+                    // set marker to 4SQ category icon
                     venue.icon_url = venue.categories[0].icon.prefix + "bg_88" + venue.categories[0].icon.suffix;
+
+                    //  Try to retrieve tips for this particular venue
                     api_get_venue_tips ( venue.id )
                         .done( function ( venue_tips ) {
-                            tips = venue_tips.response.tips.items;
-                            deferred.resolve( venue, tips );
+                            deferred.resolve( venue, venue_tips );
                         })
                         .fail( function(){
-                            console.warn( "Venue was not found on Foursquare" );
+                            console.warn( "Error retrieving tips from Foursquare" );
                             deferred.reject();
                         });
                 }
             })
             .fail(function(){
-                console.warn( "Error searching venue on foursquare" );
+                console.warn( "Error searching venue on foursquare; ignoring" );
                 deferred.reject ();
             });
         return deferred.promise();

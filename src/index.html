@@ -6,16 +6,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <!-- meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" -->
     <title>Udacity Project P5 - Best Places in NYC</title>
-
-    <script src="js/jquery.js"></script>
-    <script src="js/underscore.js"></script>
-    <script src="js/backbone.js"></script>
-    <script src="js/bootstrap.js"></script>
-    <script type="text/javascript" src='http://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyCx-9twHn2bYrasU_59Cn8J-OSzRD0Lkh4&libraries=places&signed_in=true'></script>
-    <script src="js/model.js"></script>
-    <script src="js/views.js"></script>
-    <script src="js/common.js"></script>
-    <script src="js/app.js"></script>
 </head>
 
 
@@ -38,41 +28,46 @@
     <h2 id="header-title">Best 50 Places in NYC</h2>
 </div>
 
-<div id="container-fluid">
-    <div class="row">
-        <div id="sidebar-wrapper" class="col-xs-3">
-            <div class="input-list style-1 clearfix" id="search-wrapper">
-                <input id="search-box" type="text" placeholder="search for places or addresses" autofocus>
-                <br><input id="search-checkbox" type="checkbox">
-                    <label for="search-checkbox"><span>search inside descriptions</span></label>
+<div id="page" class="">
+    <div id="sidebar-wrapper" class="col-xs-3">
+        <div class="input-list style-1 clearfix" id="search-wrapper">
+            <input id="search-box" type="text" placeholder="search for places or addresses" autofocus>
+            <br><input id="search-checkbox" type="checkbox">
+                <label for="search-checkbox"><span>search inside descriptions</span></label>
+        </div>
+        <div id="sidebar-title">
+        </div>
+        <div id="listview">
+            <div id="destinations-container">
             </div>
-            <div id="sidebar-title">
-            </div>
-            <div id="listview">
-                <div id="destinations-container">
-                </div>
-                <div id="sidebar-padding-bottom">
-                </div>
+            <div id="sidebar-padding-bottom">
             </div>
         </div>
-        <div id="body-wrapper" class="col-xs-9">
+    </div>
+
+    <div id="body-wrapper" class="col-xs-9">
+        <div class="row">
             <div id="page-header" class="col-xs-12">
                 This is the main Page Header
             </div>
             <div class="row">
-                <div id="description-box" class="col-xs-4">
-                    <div>
+                <div id="description-box" class="col-xs-3">
+                    <div class="row">
                         <img src="" id="image-box" class="img-responsive center-block">
                     </div>
-                    <div id="description-text"></div>
+                    <div id="description-text" class="row"></div>
                 </div>
-                <div id="map-canvas" class="col-xs-8">
+                <div id="map-canvas" class="col-xs-9">
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+
+<!--
+        Templates
+-->
 <script type="text/template" id="sidebar-item-template">
     <% app.placesFiltered.each(function(item, index, list) { %>
         <div class="list-group">
@@ -113,7 +108,6 @@
                 </div>
             </div>
         </div>
-
         <div id="bodyContent" class="col-xs-12">
             <p>
                 <b>[ TIP x/<%= total_tips %>, by <%= (tip.user.firstName ? tip.user.firstName : "") %> <%= tip.user.lastName ? tip.user.lastName : "" %>]</b>
@@ -121,12 +115,7 @@
             </p>
             <p>Source: Foursquare, <a href="<%= tip.canonicalUrl %>"><%= tip.canonicalUrl %></a> (posted on <%= tip.createdAt %>).</p>
         </div>
-
-
 </script>
-
-
-
 
 <script type="text/template" id="map-infowindow-template-error">
         <div id="content">
@@ -137,6 +126,16 @@
 
 <script type="text/template" id="not-used">
 </script>
+
+<script type="text/javascript" src='http://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyCx-9twHn2bYrasU_59Cn8J-OSzRD0Lkh4&libraries=places&signed_in=true'></script>
+<script src="js/jquery.js"></script>
+<script src="js/underscore.js"></script>
+<script src="js/backbone.js"></script>
+<script src="js/bootstrap.js"></script>
+<script src="js/model.js"></script>
+<script src="js/views.js"></script>
+<script src="js/common.js"></script>
+<script src="js/app.js"></script>
 
 </body>
 </html>
