@@ -6,17 +6,11 @@ var app = app || {};
     app.AppView = Backbone.View.extend({
         model: app.placesFiltered,
         el: "#destinations-container",
-        _this: this,
         events: {
             'click a': 'sidebar_click',
         },
-        map: {},
-        self: {},
 
         initialize: function () {
-            // save context for later
-            self = this;
-
             // clone collection for filtering
             app.placesFiltered = new Backbone.Collection( app.places.toJSON() );
             $( '#search-box' ).on( 'input propertychange paste', this.filter_results );
@@ -29,8 +23,8 @@ var app = app || {};
             app.placesFiltered.on( 'reset', this.render, this );
 
             // initialize Google Map
-            this.map = new Map();
-            this.map.initialize ( "map-canvas" );
+            app.map = new Map();
+            app.map.initialize ( "map-canvas" );
 	    },
 
     	render: function () {
@@ -66,22 +60,22 @@ var app = app || {};
 
             // search Google Maps for address and location
             var name = item.get( "name" );
-            var place = this.map.search( name, item );                  // search for address
+            var place = app.map.search( name, item );                  // search for address
             place
                 .done( function (place) {
-//                    var fsq = new Foursquare();                         // Search Foursquare for the same venue
-//                    var fsq_reviews_p = fsq.get_reviews( name, place ); // returns a promise()
-//                    fsq_reviews_p
-//                        .done(function( venue, tips ){
-//                            fsq.venue = venue;
-//                            fsq.tips = tips;
-//                        })
-//                        .fail(function(){
-//                            console.warn("FSQ failed");
-//                        })
-//                        .always(function( venue, tips ){
-//                            self.map.createMarker( place, name, fsq );
-//                        });
+                    var fsq = new Foursquare();                         // Search Foursquare for the same venue
+                    var fsq_reviews_p = fsq.get_reviews( name, place ); // returns a promise()
+                    fsq_reviews_p
+                        .done(function( venue, tips ){
+                            fsq.venue = venue;
+                            fsq.tips = tips;
+                        })
+                        .fail(function(){
+                            console.warn("FSQ failed");
+                        })
+                        .always(function( venue, tips ){
+                            app.map.createMarker( place, name, fsq );
+                        });
                 })
                 .fail( function () {
                     console.warn("Google failed");
