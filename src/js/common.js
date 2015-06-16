@@ -149,38 +149,43 @@ var Map = (function () {
                 alert( status );
                 console.warn ( "Error on getDetails(). Reason: [" + status + "]" );
                 return;
-            }
-
-            var content_string = "";
-
-            if (typeof self.fs.tips != 'undefined' && self.fs.tips.response.tips.count) {
-
-                var i = Math.min(4, self.fs.tips.response.tips.count-1); // FIXME
-                //debugger;
-                var total_tips = Math.min( config.max_tips, self.fs.tips.response.tips.count);
-                var tip = self.fs.tips.response.tips.items[i];
-                var data_bag = {
-                    name: result.name,
-                    tip: tip,
-                    total_tips: total_tips
-                }
-                var template_fn = _.template( $("#map-infowindow-template" ).html());
-                content_string = template_fn( data_bag );
-            }
-            else {
-                var template_fn = _.template( $("#map-infowindow-template-error" ).html());
-                content_string = template_fn();
             };
-
-            infownd.setContent( content_string );
-            infownd.open( map, marker );
-            $(".arrow-left").click(function(){
-                alert("left click");
-            });
-            $(".arrow-right").on('click', function(){
-                alert("right click");
-            });
+            create_infownd( 0, result.name );
         });
+    };
+
+
+    // handle clicks on markers
+    var create_infownd = function( i, window_name ) {
+        //create_infownd.current_tip = i;
+        var tip = self.fs.get_tip(i);
+
+        if (typeof tip == 'undefined') {
+            var template_fn = _.template( $("#map-infowindow-template-error" ).html());
+            content_string = template_fn();
+        }
+        else {
+            var total_tips = self.fs.tips.response.tips.count;
+            var data_bag = {
+                index: i+1,
+                name: window_name,
+                tip: tip,
+                total_tips: Math.min( total_tips, 30)
+            }
+            var content_string = "";
+            var template_fn = _.template( $("#map-infowindow-template" ).html());
+            content_string = template_fn( data_bag );
+        };
+        infownd.setContent( content_string );
+        infownd.open( map, marker );
+
+        $(".arrow-left").click(function(){
+            create_infownd( Math.max(i-1, 0), window_name );
+        });
+        $(".arrow-right").on('click', function(){
+            create_infownd( Math.min(i+1, 29), window_name );
+        });
+
     };
 
     return {
@@ -205,7 +210,8 @@ var Foursquare = (function () {
     };
 
     var venue = {},
-        tips = {};
+        tips = {},
+        self = {};
 
     var get_reviews = function( name, loc_obj ) {
         var deferred = new $.Deferred();
@@ -244,6 +250,14 @@ var Foursquare = (function () {
         return deferred.promise();
     }
 
+    var get_tip = function( i ) {
+        var tips = this.tips;
+        if ( typeof tips && !jQuery.isEmptyObject(tips) && i > -1 && i < (tips.response.tips.count-1) ) {
+            return tips.response.tips.items[i];
+        }
+        else return (undefined);
+    };
+
     var api_search_venue = function( name, loc_obj ) {
         var url = populate_url(
                         config.search_venue_url,
@@ -276,7 +290,8 @@ var Foursquare = (function () {
     };
 
     return {
-        get_reviews: get_reviews
+        get_reviews: get_reviews,
+        get_tip: get_tip
     };
 });
 

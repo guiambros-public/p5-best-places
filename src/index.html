@@ -110,10 +110,13 @@
         </div>
         <div id="bodyContent" class="col-xs-12">
             <p>
-                <b>[ TIP x/<%= total_tips %>, by <%= (tip.user.firstName ? tip.user.firstName : "") %> <%= tip.user.lastName ? tip.user.lastName : "" %>]</b>
+                <b>[ TIP <%= index %>/<%= total_tips %>, by <%= (tip.user.firstName ? tip.user.firstName : "") %> <%= tip.user.lastName ? tip.user.lastName : "" %>]</b>
                 <h3><%= tip.text %></h3>
             </p>
-            <p>Source: Foursquare, <a href="<%= tip.canonicalUrl %>"><%= tip.canonicalUrl %></a> (posted on <%= tip.createdAt %>).</p>
+            <p>Source: <a href="<%= tip.canonicalUrl %>">Foursquare</a> (posted on
+                <% var d = new Date(0);
+                d.setUTCSeconds(tip.createdAt) %>
+                <%= d.toString().substring(4,15) %>).</p>
         </div>
 </script>
 
