@@ -86,11 +86,9 @@ var Map = (function () {
             query: name + ", " + item.get("address") + ", NY"
         };
         var deferred = new $.Deferred();
-        console.log( "Query: " + request.query );
 
         service.textSearch( request, function ( results, status ) {
             if ( status == google.maps.places.PlacesServiceStatus.OK ) {
-                console.info( "Result found" );
                 deferred.resolve( results[0] );
             }
             else {
@@ -133,7 +131,7 @@ var Map = (function () {
             google.maps.event.addListener( marker, 'click', marker_onClick ); // add click event
         }
         else {
-            console.warn("Plotting marker, but skipping marker_shadow; foursquare did not return any venue");
+            console.warn("Using default marker; foursquare did not return any venue");
             marker = new google.maps.Marker({
                 map: map,
                 position: loc_obj.geometry.location,
@@ -170,7 +168,7 @@ var Map = (function () {
                 index: i+1,
                 name: window_name,
                 tip: tip,
-                total_tips: Math.min( total_tips, 30)
+                total_tips: Math.min( total_tips, self.config.max_tips)
             }
             var content_string = "";
             var template_fn = _.template( $("#map-infowindow-template" ).html());

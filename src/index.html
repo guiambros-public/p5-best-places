@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <title>Udacity Project P5 - Best Places in NYC</title>
 </head>
 
@@ -24,64 +24,86 @@
 
 <body>
 
-<div id="header" class="navbar navbar-default navbar-fixed-top header">
-    <h2 id="header-title">Best 50 Places in NYC</h2>
-</div>
-
-<div id="page" class="">
-    <div id="sidebar-wrapper" class="col-xs-3">
-        <div class="input-list style-1 clearfix" id="search-wrapper">
-            <input id="search-box" type="text" placeholder="search for places or addresses" autofocus>
-            <br><input id="search-checkbox" type="checkbox">
-                <label for="search-checkbox"><span>search inside descriptions</span></label>
-        </div>
-        <div id="sidebar-title">
-        </div>
-        <div id="listview">
-            <div id="destinations-container">
-            </div>
-            <div id="sidebar-padding-bottom">
-            </div>
+<div id="page" class="container-fluid">
+    <div id="header-navbar" class="row navbar-fixed-top">
+        <div class="col-xs-12">
+            <h2>Best Places in NYC</h2>
         </div>
     </div>
 
-    <div id="body-wrapper" class="col-xs-9">
-        <div class="row">
-            <div id="page-header" class="col-xs-12">
-                This is the main Page Header
+    <div id="body-row" class="row">
+
+        <!-- left fixed sidebar -->
+        <div id="sidebar-wrapper" class="col-xs-3">
+            <div id="search-wrapper" class="input-list style-1 clearfix">
+                <input id="search-field" type="text" placeholder="search for places or addresses" autofocus>
+                <br>
+                <div>
+                    <input id="search-checkbox" type="checkbox">
+                    <label for="search-checkbox">
+                        <span id="search-non-abbrev" class="hidden">search descriptions</span>
+                        <span id="search-abbrev" class="hidden">search desc.</span>
+                    </label>
+                </div>
+            </div>
+            <div id="num-places">
+            </div>
+            <div id="listview-items" style="height:250px;overflow:auto; -webkit-overflow-scrolling: touch;">
+                <div id="listview-items-container">
+                    <div id="sidebar-padding-bottom">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- main body -->
+        <div id="body-wrapper-fixed" class="col-xs-9">
+            <div class="row">
+                <div id="body-instructions" class="col-md-12 col-sm-12 col-xs-12">
+                    Select a place from the left, and click on the marker on the map for tips
+                </div>
             </div>
             <div class="row">
-                <div id="description-box" class="col-xs-3">
-                    <div class="row">
-                        <img src="" id="image-box" class="img-responsive center-block">
+
+                <!-- description -->
+                <div id="description-box" class="col-md-3 col-sm-3 hidden-xs">
+                    <div>
+                        <img src="" id="description-image" class="img-responsive center-block">
                     </div>
-                    <div id="description-text" class="row"></div>
+                    <div id="description-text">
+                    </div>
                 </div>
-                <div id="map-canvas" class="col-xs-9">
+
+                <!-- map area -->
+                <div id="map-canvas" class="col-md-9 col-sm-9 col-xs-12 nextrow">
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 
 
 <!--
-        Templates
+      TEMPLATES
 -->
+
+<!-- Templates: side bar listview with each place -->
 <script type="text/template" id="sidebar-item-template">
     <% app.placesFiltered.each(function(item, index, list) { %>
         <div class="list-group">
             <a href="#" class="list-group-item" data-id="<%= index %>">
                 <h4><div class="listview-title"><%= item.get("name") %></div></h4>
-                <p class="listview-address"><%= item.get("address") %></p>
+                <p class="listview-address hidden-xs"><%= item.get("address") %></p>
             </a>
         </div>
     <% }); %>
 </script>
 
-<script type="text/template" id="sidebar-title-template">
+<!-- Template: title showing the number of places in the listview -->
+<script type="text/template" id="num-places-template">
     <%
-        var msg = "Showing " + app.placesFiltered.length + " great place" + (app.placesFiltered.length > 1 ? "s" : "");
+        var msg = "<h4>Showing " + app.placesFiltered.length + " great place" + (app.placesFiltered.length > 1 ? "s" : "") + "</h4>";
         if (app.placesFiltered.length == 0) {
             msg = "No places found";
         }
@@ -89,6 +111,7 @@
     <%= msg %>
 </script>
 
+<!-- Template: Google Maps InfoWindow pop-up -->
 <script type="text/template" id="map-infowindow-template">
         <div id="content" class="col-xs-12">
             <div class="col-xs-8">
@@ -108,10 +131,10 @@
                 </div>
             </div>
         </div>
-        <div id="bodyContent" class="col-xs-12">
+        <div class="col-xs-12">
             <p>
                 <b>[ TIP <%= index %>/<%= total_tips %>, by <%= (tip.user.firstName ? tip.user.firstName : "") %> <%= tip.user.lastName ? tip.user.lastName : "" %>]</b>
-                <h3><%= tip.text %></h3>
+                <h4 id="fsq_tip_text"><p><%= tip.text %></p></h4>
             </p>
             <p>Source: <a href="<%= tip.canonicalUrl %>">Foursquare</a> (posted on
                 <% var d = new Date(0);
@@ -120,6 +143,7 @@
         </div>
 </script>
 
+<!-- Template: Google Maps InfoWindow pop-up, when no results were found on Foursquare -->
 <script type="text/template" id="map-infowindow-template-error">
         <div id="content">
             <div id="siteNotice"></div>
@@ -127,11 +151,15 @@
         </div>
 </script>
 
-<script type="text/template" id="not-used">
-</script>
+<!--  -->
 
+
+<!--
+      SCRIPTS
+-->
 <script type="text/javascript" src='http://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyCx-9twHn2bYrasU_59Cn8J-OSzRD0Lkh4&libraries=places&signed_in=true'></script>
 <script src="js/jquery.js"></script>
+<script src="js/jquery.slimscroll.js"></script>
 <script src="js/underscore.js"></script>
 <script src="js/backbone.js"></script>
 <script src="js/bootstrap.js"></script>
@@ -139,6 +167,7 @@
 <script src="js/views.js"></script>
 <script src="js/common.js"></script>
 <script src="js/app.js"></script>
+<div id="debug"></div>
 
 </body>
 </html>

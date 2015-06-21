@@ -5,7 +5,7 @@ var app = app || {};
 
     app.AppView = Backbone.View.extend({
         model: app.placesFiltered,
-        el: "#destinations-container",
+        el: "#listview-items-container",
         events: {
             'click a': 'sidebar_click',
         },
@@ -13,7 +13,7 @@ var app = app || {};
         initialize: function () {
             // clone collection for filtering
             app.placesFiltered = new Backbone.Collection( app.places.toJSON() );
-            $( '#search-box' ).on( 'input propertychange paste', this.filter_results );
+            $( '#search-field' ).on( 'input propertychange paste', this.filter_results );
             $( '#search-checkbox' ).change( this.filter_results );
             this.render();
 
@@ -25,14 +25,23 @@ var app = app || {};
             // initialize Google Map
             app.map = new Map();
             app.map.initialize ( "map-canvas" );
+
+            // initialize slimscroll on sidebar
+            if (!('ontouchstart' in document.documentElement)){ // touch devices already have a nice scroll
+                $(function(){
+                    $('#listview-items').slimScroll({
+                        height: '2000px'
+                    });
+                });
+            }
 	    },
 
     	render: function () {
             var template_fn = _.template( $("#sidebar-item-template").html() );
             this.$el.html( template_fn() );
 
-            template_fn = _.template( $("#sidebar-title-template").html() );
-            $("#sidebar-title").html( template_fn() );
+            template_fn = _.template( $("#num-places-template").html() );
+            $("#num-places").html( template_fn() );
             return this;
         },
 
@@ -55,8 +64,8 @@ var app = app || {};
             var item = app.placesFiltered.models[id];
 
             // populate description and image
-            $( "#image-box" ).attr("src", item.get( "image" ) );
-            $( "#description-text" ).html( item.get( "description" ) );
+            $( "#description-image" ).attr("src", item.get( "image" ) );
+            $( "#description-text" ).html( "<p>" + item.get( "description" ) + "...</p>");
 
             // search Google Maps for address and location
             var name = item.get( "name" );
@@ -71,7 +80,7 @@ var app = app || {};
                             fsq.tips = tips;
                         })
                         .fail(function(){
-                            console.warn("FSQ failed");
+                            //
                         })
                         .always(function( venue, tips ){
                             app.map.createMarker( place, name, fsq );
@@ -83,8 +92,7 @@ var app = app || {};
         },
 
         filter_results: function(e) {
-            console.log ( "entering filter_results" );
-            var search_text = $("#search-box").val().toLowerCase();
+            var search_text = $("#search-field").val().toLowerCase();
             var filterFn = function(collection) {
                 var ret = collection.get('name').toLowerCase().indexOf(search_text) > -1 ||
                           collection.get('address').toLowerCase().indexOf(search_text) > -1;
@@ -98,28 +106,3 @@ var app = app || {};
         },
     });
 })(jQuery);
-
-
-/*
-
-References:
-
-- Using data-id to retrieved the clicked element, on situations where you have a single view, with multiple models
-  https://lostechies.com/derickbailey/2011/10/11/backbone-js-getting-the-model-for-a-clicked-element/
-
-- Using and combining Promises (or, "Avoiding callback-hell"):
-  http://www.nurkiewicz.com/2013/03/promises-and-deferred-objects-in-jquery.html
-
-- Inspiration for the shadow markers
-  http://www.foodspotting.com/find/within/40.74368139882518,-73.99250956170653/40.769687713159634,-73.91182871453856
-
-- Creating SVG images in pure CSS/HTML
-  http://metafizzy.co/blog/making-svg-buttons/
-
-- Filtered Collection Decorator pattern, by Derick Bailey
-  http://spin.atomicobject.com/2013/08/08/filter-backbone-collection/
-
-- Understanding delete
-  http://perfectionkills.com/understanding-delete/
-
-*/

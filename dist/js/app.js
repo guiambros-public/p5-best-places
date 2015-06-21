@@ -1,0 +1,1 @@
+var app=app||{};!function(){"use strict";$(function(){app.places.status.done(function(){app.view=new app.AppView}).fail(function(){void 0}).always(function(){})})}();

@@ -1,129 +1,93 @@
-img {
-  max-width: 50%;
-  float: left;
-  display: block;
-  border:1px solid #ccc;
-}
-
 body {
-  padding-top: 50px;
-  overflow: hidden;
+  color: #4d4d4d;
   font: 16px 'Helvetica Neue', Helvetica, Arial, sans-serif;
   line-height: 1.4em;
+  overflow: hidden;
   background: #eaeaea url('../assets/images/bg.png');
-  color: #4d4d4d;
-  width: 90%;
-  height: 100%;
-  margin-left: 5%;
-  margin-right: 5%;
-  -webkit-font-smoothing: antialiased;
-  -moz-font-smoothing: antialiased;
-  -ms-font-smoothing: antialiased;
-  -o-font-smoothing: antialiased;
-  font-smoothing: antialiased;
+}
+
+.hidden {
+  display: none;
 }
 
 /*
-    header & page structure
+    header
 */
-#header {
-  color: #4d4d4d;
-  border-radius: inherit;
-  padding-left: 20px;
+#header-navbar {
+  height: 65px;
+  color: #fff;
+  font-size: 30px;
+  line-height: 1.4em;
+  padding-left: 30px;
   background: #5f5f5f;
 }
 
-#header-title {
-  color: #fff;
-  font-size: 30px;
-}
-
-#page {
-  min-height: 100%;
-  height: 100%;
-  width: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: inline-block;
+#body-row {
+  padding-top: 65px;  /* must be the same as header-navbar's height */
 }
 
 
 /*
-    sidebar with smooth scrolling on touch devices
-    source https://css-tricks.com/snippets/css/momentum-scrolling-on-ios-overflow-elements/
+     Sidebar with places
 */
 #sidebar-wrapper {
-  height: 100%;
-  overflow-y: scroll;
-  padding: 90px 0 0 0;
-  background: #FFAAAA;
-  max-width: 400px;
-  -webkit-overflow-scrolling: touch;
-  border: solid 5px #00ff00;
+  padding-top: 20px;
+  max-width: 350px;
+  background: #CFC0BA;
 }
 
-/*
-    search-box - source: http://callmenick.com/post/various-css-input-text-styles
-*/
 #search-wrapper {
-  margin: 0px 0 0 15px;
   font-family: sans-serif;
-  font-size: 16px;
-  appearance: none;
+  font-size: 14px;
+  font-weight: normal;
   box-shadow: none;
-  border-radius: none;
-  display: block;
 }
 
-input[type="text"] {
+/*  search area  */
+#search-field {
   width: 95%;
-}
-
-input[type="text"]:focus {
-  outline: none;
-}
-
-.style-1 input[type="text"] {
   padding: 5px;
   border: solid 1px #dcdcdc;
   transition: box-shadow 0.3s, border 0.3s;
 }
 
-.style-1 input[type="text"]:focus,
-.style-1 input[type="text"].focus {
+#search-field:focus,
+#search-field.focus {
+  outline: none;
   border: solid 1px #707070;
   box-shadow: 0 0 5px 1px #969696;
 }
 
-input[type="checkbox"] + label span {
-    display:inline-block;
-    margin:-1px 4px 0 0;
-    vertical-align:middle;
-    cursor:pointer;
-    font-size: 14px;
-    font-weight: normal;
+#search-checkbox + label span {
+  cursor: pointer;
+  font-weight: normal;
+  display: inline;
+}
+
+#search-non-abbrev {
+  display: inline !important;
+}
+
+#search-abbrev {
+  display: none !important;
 }
 
 
-/*
-
-*/
-
-#sidebar-title {
+/*  listview items  */
+#num-places {
   position: relative;
-  padding: 20px 30px 0px 10px;
   font-size: 20px;
   font-weight: normal;
 }
 
-#listview {
+#listview-items {
+  height: calc(100vh - 210px) !important; /* override default bootstrap css. Scrollable area = device height - headers * search area */
   position: relative;
-  padding: 10px 10px 10px 10px;
+  -webkit-overflow-scrolling: touch;    /* enable smooth scrolling on touch devices */
 }
 
-#siderbar-padding-bottom {
-  height: 50px;
+.list-group-item {
+  border: 0;
 }
 
 .list-group-item.active {
@@ -144,58 +108,59 @@ input[type="checkbox"] + label span {
   line-height: 1.3;
 }
 
-/*
-    middle-right
-*/
-#body-wrapper {
-  height: 100%;
-  padding: 50px 0 0 0;
-  background: #00FF00;
-  border: solid 5px #ff5500;
-}
+
 
 /*
-#middle-wrapper-bodyx {
-  position: relative;
-  height: 100%;
-  overflow: hidden;
-  padding: 0 0 0 10px;
-  background: #FFFF00;
-}
+    description + map (fixed; no scroll)
 */
-
-#page-header {
+#body-instructions {
   font-size: 20px;
-  padding: 20px 0 20px 30px;
-  border-right: 1px solid gray;
-  background: #00FFFF;
+  padding: 20px 0 20px 10px;
 }
 
 #description-box {
-  background: #FFFF00;
   height: 600px;
-  margin: 10px 10px 10px 10px;
-  width: 30%;
-  border-style: solid;
-  border-width: 10px;
-  border-color: gray;
-  font-size: 15px;
+  max-width: 300px;
+  font-size: 14px;
   line-height: 120%;
-  max-width: 100%;
 }
 
+#description-image {
+   box-shadow: 5px 5px 3px rgba(0,0,0,0.3);
+}
+
+/* display ellipsis (...) after x lines */
+#description-text {
+  margin: 20px 0;
+  line-height: 1.5;
+  overflow: hidden;
+  position: relative;
+  max-height: 18em;      /* ~15 lines */
+}
+
+#description-text:before  {
+  bottom: 0;
+  position: absolute;
+  right: 0;
+  content: '\2026';
+}
+
+#description-text:after{
+  content: '';
+  position: absolute;
+  height: 0px;
+  width: 100%;
+  z-index: 1;
+}
+
+/* map and infowindow box */
 #map-canvas {
-  background: #A04040;
-  margin: 10px 10px 10px 10px;
-  width: 60%;
-  height: 600px;
-  border-style: solid;
-  border-width: 10px;
-  border-color: gray;
+  height: calc(100vh - 130px);    /* device height - height of (header + instructions) */
 }
 
-.list-group-item {
-  border: 0;
+#fsq_tip_text p {
+  font-size: 18px;
+  line-height: 1.4em;
 }
 
 #content {
@@ -203,7 +168,7 @@ input[type="checkbox"] + label span {
 
 }
 
-/* arrows */
+/* next/prev arrows in the infowindow box */
 #arrows {
   width: 80px;
   vertical-align: bottom;
@@ -225,84 +190,125 @@ input[type="checkbox"] + label span {
 }
 
 
-
-
 /*
-    large desktops and laptops
+    debug
 */
-@media (min-width: 1200px) {
-
-}
-
-/*
-    landscape tablets and medium desktops
-*/
-@media (min-width: 992px) and (max-width: 1199px) {
-  #sidebar-wrapper {
-    max-width: 300px;
-  }
-
-  #sidebar,#sidebar-title {
-    padding: 0 20px 20px 20px;
-  }
-}
-
-/*
-    portrait tablets and small desktops
-*/
-@media (min-width: 768px) and (max-width: 991px) {
-  #sidebar-wrapper {
-    max-width: 250px;
-  }
-
-  #sidebar,#sidebar-title {
-    padding: 0 15px 15px 15px;
-  }
-}
-
-/*
-    landscape phones and portrait tablets
-*/
-@media (max-width: 767px) {
-  #sidebar-wrapper {
-    max-width: 200px;
-  }
-
-  #sidebar,#sidebar-title {
-    padding: 0 10px 10px 10px;
-  }
+#debug {
+    content: "regular";
+    display: none;
 }
 
 
 /*
     portrait phones and smaller
 */
-@media (max-width: 480px) {
+@media only screen and (max-width: 480px) {
+  #body-instructions {
+    display: none;
+  }
+
+  #search-abbrev {
+    display: inline !important;
+  }
+
+  #search-non-abbrev {
+    display: none !important;
+  }
+
   #sidebar-wrapper {
     max-width: 100px;
+    padding: 5px;
   }
 
-  #sidebar,#sidebar-title {
-    padding: 0 0 0 0;
+  #search-field {
+    padding: 0;
   }
 
-  #sidebar-title {
-    visibility: hidden;
+  #search-wrapper {
+    font-family: sans-serif;
+    font-size: 10px;
+    display: inline;
   }
 
-  h4,p{
-    font-size: 12px;
+  #search-checkbox + label {
+    display: inline;
   }
 
-  .listview-group {
-    margin-bottom: 5px;
+  #search-checkbox + label span {
+    line-height: 0.7em;
+    font-size: 10px;
+    display: inline;
+  }
+
+  #num-places {
+    display: none;
+  }
+
+  #listview-items {
+    height: calc(100vh - 147px) !important;
   }
 
   .listview-title {
     font-weight: normal;
+    font-size: 12px;
   }
 
   .list-group-item {
-    padding: 5px 5px;
+    padding: 1px 3px 1px 3px;
+  }
+
+  .list-group {
+    margin-bottom: 7px;
+  }
+
+  #debug {
+    content: "xs < 480px";
+  }
+}
+
+
+/*
+    tablets
+*/
+@media only screen and (min-width: 481px) and (max-width: 768px) {
+  #body-instructions {
+    display: none;
+  }
+
+  #search-abbrev {
+    display: inline !important;
+  }
+
+  #search-non-abbrev {
+    display: none !important;
+  }
+
+  #num-places {
+    display: none;
+  }
+
+  #listview-items {
+    height: calc(100vh - 175px) !important;
+  }
+
+  .listview-title {
+    font-weight: normal;
+    font-size: 14px;
+  }
+
+  .list-group-item {
+    padding: 4px 5px 4px 5px;
+  }
+
+  .list-group {
+    margin-bottom: 10px;
+  }
+
+  #map-canvas {
+    height: calc(100vh - 65px);    /* device height - height of header  [note: instructions is hidden] */
+  }
+
+  #debug {
+    content: "sd < 768px";
   }
 }

@@ -1,5 +1,5 @@
 'use strict';
-var COMPRESS = false;       // false = skip minification. Useful for debugging
+var COMPRESS = true;       // false = skip minification. Useful for debugging
 
 // gulp control variables
 var gulp = require('gulp');
@@ -41,6 +41,7 @@ var paths = {
         ,'../components/underscore/underscore.js'
         ,'../components/backbone/backbone.js'
         ,'../components/backbone.localStorage/backbone.localStorage.js'
+        ,'../components/slimscroll/jquery.slimscroll.js'
         ,'../components/bootstrap/dist/js/bootstrap.js'
         ,'!_spec/*.js'
         ,'!db/**/*.js'
@@ -155,32 +156,15 @@ gulp.task('others', function () {
 
 // -------
 
-
 gulp.task('test_jasmine', function () {
     return gulp.src( SRC + '/spec/test.js' )
     .pipe( jasmine() );
 });
 
 gulp.task('watch', function() {
-    //gulp.watch( SRC + '/**/*.js',   ['minify_js'] );
-    //gulp.watch( SRC + '/**/*.html',    ['minify_html'] );
-    //gulp.watch( SRC + '/**/*.css',  ['minify_css'] );
-    //gulp.watch( SRC + '/**/assets/*',  ['compress_images'] );
     gulp.watch( sourceDir(paths.js),   ['minify_js'] );
     gulp.watch( sourceDir(paths.html), ['minify_html'] );
     gulp.watch( sourceDir(paths.css),  ['minify_css'] );
     gulp.watch( sourceDir(paths.img),  ['compress_images'] );
     gulp.watch( sourceDir(paths.db),   ['create_db'] );
  });
-
-
-// Create small thumbnails for a specific image
-// gulp.task('create_thumbnail', ['compress_images'], function() {
-//     return gulp.src(SRC + '**/largeimage.jpg', {base: SRC})
-//     .pipe(imgResize({ width : 100 }))
-//     .pipe(jpegoptim({max: 70})())
-//     .pipe(jpegtran({ progressive: true, optimize: true })())
-//     .pipe(rename({ extname: '-thumb.jpg' }))
-//     .pipe(gulp.dest(DEST));
-// });
-
