@@ -1,4 +1,4 @@
-# Best Places in NYC
+# Udacity Project P5 - Best Places in NYC
 
 This is a single-page application, featuring a map of the 50 best places in NYC. This page allows you to quickly browse through the list of best places, see where it is located, and check tips from Foursquare.
 
@@ -18,6 +18,8 @@ The map is provided by [Google Maps API v3](https://developers.google.com/maps/d
 * Google Maps conveniently shows the location
 * You can narrow down the list by searching for a specific place or address
 * You can also optionally search on the extended descriptions
+
+![p5-best-places-nyc =800x](https://cloud.githubusercontent.com/assets/11373126/8270331/b0f2e074-17a9-11e5-8808-596539276e64.png)
 
 
 ## UX and Technical details:
