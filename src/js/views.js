@@ -10,11 +10,22 @@ var app = app || {};
             'click a': 'sidebar_click',
         },
 
+        /*  This function takes care of the view initialization.
+
+            - The Backbone collection is duplicated, so we can do filtering
+              without impacting the original collection.
+            - Events are bound to the initial object context, and the `reset`
+              event triggers a new render(). Google Maps is initialized and shown.
+            - jQuery slimScroll is inserted, for non-touch devices
+         */
         initialize: function () {
             // clone collection for filtering
             app.placesFiltered = new Backbone.Collection( app.places.toJSON() );
+
+            // set event triggers on change for the search field (both keyboard & mouse/paste)
             $( '#search-field' ).on( 'input propertychange paste', this.filter_results );
             $( '#search-checkbox' ).change( this.filter_results );
+
             this.render();
 
             // set up events
@@ -36,6 +47,8 @@ var app = app || {};
             }
 	    },
 
+        /*  This function renders the collection, using Underscore's templating system
+         */
     	render: function () {
             var template_fn = _.template( $("#sidebar-item-template").html() );
             this.$el.html( template_fn() );
@@ -46,16 +59,18 @@ var app = app || {};
         },
 
 
-        // Manage click events on sidebar buttons
-        //
-        // The id is obtained from the data-id element used in the template,
-        // and adjust the description box and google maps. #active class is
-        // toggled, to simulate the on/off effect
-        //
+        /* This function manages click events on the sidebar with the destinations
+
+           First we obtain the id of the clicked element via DOM's data-id element.
+           We then populate the description box (image and text), and start a
+           search for this destination's address on Google Maps.
+
+           If the destination is found, we use the geocoordinates and name to
+           search on Foursquare, and store the values on the object property fsq.
+        */
         sidebar_click: function(e) {
-            // adjust UI to reflect the click
             e.preventDefault();
-            $( "a" ).toggleClass( "active", false );                    // reset everyone
+            $( "a" ).toggleClass( "active", false );                    // reset everything to default state
             var clicked_el = $( e.currentTarget );
             clicked_el.toggleClass( "active", true );                   // mark clicked element as active
 
@@ -80,7 +95,7 @@ var app = app || {};
                             fsq.tips = tips;
                         })
                         .fail(function(){
-                            //
+                            // no explicit treatment needed. It will degrade gracefully
                         })
                         .always(function( venue, tips ){
                             app.map.createMarker( place, name, fsq );
@@ -91,6 +106,17 @@ var app = app || {};
                 });
         },
 
+
+        /* This function manages the search functionality, filtering the
+           collection according to the content of the search-field.
+
+           This is triggered by any change to the search-field, either via
+           keyboard or paste via mouse.
+
+           Some basic string manipulation is done to make sure that the search
+           is case-insensitive. It also controls the serch inside
+           descriptions, if selected.
+        */
         filter_results: function(e) {
             var search_text = $("#search-field").val().toLowerCase();
             var filterFn = function(collection) {
@@ -102,7 +128,7 @@ var app = app || {};
                 return ret;
             };
 
-            app.placesFiltered.reset ( filteredCollection( app.places, filterFn ) );
+            app.placesFiltered.reset ( filteredCollection( app.places, filterFn ) );    // see common.js for filteredCollection()
         },
     });
 })(jQuery);

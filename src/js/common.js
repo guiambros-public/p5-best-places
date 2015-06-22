@@ -1,6 +1,15 @@
+/*
+  -----------------------------------
+    Map class
+  -----------------------------------
+*/
 var Map = (function () {
     'use strict';
 
+    /*
+       config, map, icon_marker, icon_shadow
+       are properties defining the map configuration and overall layout
+     */
     var config = {
         el_id: "map-canvas-box",
         location: "",
@@ -41,6 +50,17 @@ var Map = (function () {
 
     var self = {};
 
+
+    /*
+       Public method - Map initialization
+
+       This follows the standard procedure on Google Maps API v3, by creating
+       the LatLng object, creating the map, and applying the styling defined
+       above.
+
+        It also adds a click event trigger on the map, that closes the
+        infowindow (if open). This is the intuitive user behavior.
+     */
     var initialize = function ( el ) {
         // save context, for later use
         self = this;
@@ -74,11 +94,16 @@ var Map = (function () {
     };
 
 
-    // Search for the specific location using Google Places API
-    //
-    // To avoid false positives, search on a radius of 50 miles around
-    // Manhattan, and limited to NY state.
-    //
+    /*
+        Public Method - Search
+
+        This function searches for a specific location using Google Places API.
+        To avoid false positives, search on a radius of 50 miles around
+        Manhattan, and limited to NY state.
+
+        This function returns an asynchronous promise, so the caller has to
+        check for its completion (i.e., using `.done()`).
+     */
     var search = function ( name, item ) {
         var request = {
             location: center_radius_obj,
@@ -100,7 +125,16 @@ var Map = (function () {
     };
 
 
-    // Create map markers
+    /*
+        Public Method - Create Map Markers
+
+        This function create map markers. It uses two markers - one for the
+        shadow, plus the specific icon returned by Foursquare's API (there are
+        icons for bars, restaurants, party, etc).
+
+        If the marker was found on Foursquare, adds an event click trigger to
+        the marker pointing to marker_onClick().
+     */
     var createMarker = function( loc_obj, name, fsq_obj ) {
         marker.setMap(null);                        // remove previous markers
         marker_shadow.setMap(null);
@@ -108,7 +142,7 @@ var Map = (function () {
         venue_location = loc_obj;
         self.fs = fsq_obj;
 
-        // create shadow marker, but only if displaying
+        // create shadow marker, but only if available
         if (typeof fsq_obj.tips != 'undefined') {
 
             // create location markers
@@ -140,7 +174,12 @@ var Map = (function () {
         }
     };
 
-    // handle clicks on markers
+    /*
+        Private method - Proxy function to handle clicks on Markers
+
+        When a click on a Marker is received, the information is extracted
+        from Google Maps and passed to create the InfoWindow.
+     */
     var marker_onClick = function() {
         service.getDetails( venue_location, function( result, status ) {
             if ( status != google.maps.places.PlacesServiceStatus.OK ) {
@@ -148,14 +187,27 @@ var Map = (function () {
                 console.warn ( "Error on getDetails(). Reason: [" + status + "]" );
                 return;
             };
-            create_infownd( 0, result.name );
+            create_infownd( 0, result.name );   // 0 indicates 1st FSQ tip to show
         });
     };
 
 
-    // handle clicks on markers
+    /*
+        Private method - Function to handle clicks on Markers
+
+        This function is called to handle clicks on Markers. It retrieves
+        information about the tips available for this specific location
+        (stored on properties of this object - self.fs, map), and populate the
+        DOM accordingly.
+
+        This also sets a recursive click event trigger to handle clicks on the
+        the PREV/NEXT arrows.
+
+        There is a limit of 30 tips per call on Foursquare's API. It is
+        possible to expand this number, but it'd increase the complexity
+        unecessarily.
+     */
     var create_infownd = function( i, window_name ) {
-        //create_infownd.current_tip = i;
         var tip = self.fs.get_tip(i);
 
         if (typeof tip == 'undefined') {
@@ -181,11 +233,12 @@ var Map = (function () {
             create_infownd( Math.max(i-1, 0), window_name );
         });
         $(".arrow-right").on('click', function(){
-            create_infownd( Math.min(i+1, 29), window_name );
+            create_infownd( Math.min(i+1, 29), window_name );    // hardcoded to 30 tips max
         });
 
     };
 
+    // return the "public" methods, using the revealing module pattern
     return {
         config: config,
         initialize: initialize,
@@ -196,9 +249,20 @@ var Map = (function () {
 
 
 
+
+
+/*
+  -----------------------------------
+    Foursquare class
+  -----------------------------------
+ */
 var Foursquare = (function () {
     'use strict';
 
+    /*
+        config, venue, tips
+        Properties to handle overall configuration, and store returned values
+     */
     var config = {
         client_id: "NV4ZGMW3U444RSQPTBPNCFDYBTYTQ1WKRRKBYLB4YSQ1BH2T",
         secret: "UHJHNVV2TMIHZUNP2J13ZPWP5F1XI0IRX3B3SAX2B4QMCVJX",
@@ -211,6 +275,21 @@ var Foursquare = (function () {
         tips = {},
         self = {};
 
+
+    /*
+        Public function, to return the tips for one specific location
+        It receives the venue name, and a GoogleMaps LatLng object.
+
+        In order to retrieve the tips, we first need to search Foursquare for
+        the specific venue, looking at the specific lat/long coordinates, and
+        the venue name. Upon successful return of a venue, we then query
+        Foursquare again for tips on this specific venue.
+
+        This function returns a Promise to the caller. Upon successful return
+        from the API, the promise is ressolved and the venue (useful for the
+        icon) and venue tips are returned. If there's an error, degrade
+        gracefully.
+     */
     var get_reviews = function( name, loc_obj ) {
         var deferred = new $.Deferred();
 
@@ -225,7 +304,6 @@ var Foursquare = (function () {
                     deferred.reject();
                 }
 
-                // Location found, proceed
                 else {
                     // set marker to 4SQ category icon
                     venue.icon_url = venue.categories[0].icon.prefix + "bg_88" + venue.categories[0].icon.suffix;
@@ -248,14 +326,11 @@ var Foursquare = (function () {
         return deferred.promise();
     }
 
-    var get_tip = function( i ) {
-        var tips = this.tips;
-        if ( typeof tips && !jQuery.isEmptyObject(tips) && i > -1 && i < (tips.response.tips.count-1) ) {
-            return tips.response.tips.items[i];
-        }
-        else return (undefined);
-    };
 
+    /*
+        Query the Foursquare API for a specific venue.
+        Auxiliary private function; returns a promise (from getJSON)
+     */
     var api_search_venue = function( name, loc_obj ) {
         var url = populate_url(
                         config.search_venue_url,
@@ -266,6 +341,11 @@ var Foursquare = (function () {
         return $.getJSON( url );
     };
 
+
+    /*
+        Query the Foursquare API to retrieve tips for a specific venue
+        Auxiliary private function; returns a promise (from getJSON)
+     */
     var api_get_venue_tips = function ( venue_id ) {
         var url = populate_url(
                         config.tips_url,
@@ -274,6 +354,27 @@ var Foursquare = (function () {
         return $.getJSON( url );
     };
 
+
+    /*
+        Auxiliary public function to return a specific tip, from the
+        collection of tips.
+
+        Used by create_infownd(), to deal with empty tips array or undefined
+        object (if failed to retrieve tips).
+     */
+    var get_tip = function( i ) {
+        var tips = this.tips;
+        if ( typeof tips && !jQuery.isEmptyObject(tips) && i > -1 && i < (tips.response.tips.count-1) ) {
+            return tips.response.tips.items[i];
+        }
+        else return (undefined);
+    };
+
+
+    /*
+        Populates Fourquare API URL, given a set of parameters (lat/long, venue, today's date)
+        Auxiliary private function. Returns the formatted URL.
+     */
     var populate_url = function( base_url, params ) {
         var now = new Date();
         var date_yyyymmdd = now.toISOString().slice(0,10).replace(/-/g,"");
@@ -287,6 +388,7 @@ var Foursquare = (function () {
         return url;
     };
 
+    // return the "public" methods, using the revealing module pattern
     return {
         get_reviews: get_reviews,
         get_tip: get_tip
@@ -296,6 +398,11 @@ var Foursquare = (function () {
 
 
 // Filtered Collection Decorator pattern, by Derick Bailey
+//
+// Given an original collection, returns a copy using the filter function
+// passed as a parameter
+//
+// Source:
 // http://spin.atomicobject.com/2013/08/08/filter-backbone-collection/
 //
 var filteredCollection = function(original, filterFn) {

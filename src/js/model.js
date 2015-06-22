@@ -4,6 +4,13 @@ var app = app || {};
 (function () {
     'use strict';
 
+    /*  This is the model & collection.
+
+        Note that the Collection uses $.getJSON to load the data. The return
+        is a Promise, which is then placed on PlacesCollection.status, and is
+        then used by the app bootloader to discover when the collection
+        finished loading (so the view can be initialized).
+     */
     var Place = Backbone.Model.extend({
         defaults: {
             id: '',
