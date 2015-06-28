@@ -261,6 +261,10 @@ body {
     margin-bottom: 7px;
   }
 
+  #map-canvas {
+    height: calc(100vh - 65px);    /* device height - height of header  [note: instructions is hidden] */
+  }
+
   #debug {
     content: "xs < 480px";
   }

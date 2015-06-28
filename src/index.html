@@ -12,6 +12,18 @@
     <link href="css/bootstrap.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet" type="text/css">
 
+    <script type="text/javascript" src='http://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyCx-9twHn2bYrasU_59Cn8J-OSzRD0Lkh4&libraries=places&signed_in=true'></script>
+    <script src="js/jquery.js"></script>
+    <script src="js/jquery.slimscroll.js"></script>
+    <script src="js/knockout.js"></script>
+    <script src="js/knockout.mapping.js"></script>
+    <script src="js/underscore.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script src="js/model.js"></script>
+    <script src="js/views.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/app.js"></script>
+
     <script type="text/javascript">
         // LiveReload hack refresh.
         // Fixes the issue with Chrome, not refresh the page unless when mouse is over the viewport
@@ -36,10 +48,10 @@
         <!-- left fixed sidebar -->
         <div id="sidebar-wrapper" class="col-xs-3">
             <div id="search-wrapper" class="input-list style-1 clearfix">
-                <input id="search-field" type="text" placeholder="search for places or addresses" autofocus>
+                <input id="search-field" type="text" placeholder="search for places or addresses" data-bind="textInput: app.view.search_box" autofocus/>
                 <br>
                 <div>
-                    <input id="search-checkbox" type="checkbox">
+                    <input id="search-checkbox" type="checkbox" data-bind="checked: app.view.search_desc_checkbox"/>
                     <label for="search-checkbox">
                         <span id="search-non-abbrev" class="hidden">search descriptions</span>
                         <span id="search-abbrev" class="hidden">search desc.</span>
@@ -47,11 +59,21 @@
                 </div>
             </div>
             <div id="num-places">
+                <h4><span data-bind="text: app.view.msg_filter_result"></span>
+                </h4>
             </div>
+
             <div id="listview-items" style="height:250px;overflow:auto; -webkit-overflow-scrolling: touch;">
-                <div id="listview-items-container">
-                    <div id="sidebar-padding-bottom">
+                <div id="listview-items-container" data-bind="foreach: app.view.filteredPlaces">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item" data-bind="attr: { 'data-id': id }, click: app.view.sidebar_click">
+                            <h4><div class="listview-title" data-bind="text: name"></div></h4>
+                            <p class="listview-address hidden-xs" data-bind="text: address"></p>
+                        </a>
                     </div>
+                </div>
+
+                <div id="sidebar-padding-bottom">
                 </div>
             </div>
         </div>
@@ -83,34 +105,13 @@
 </div>
 
 
+<script type="text/javascript">
+
+</script>
 
 <!--
       TEMPLATES
 -->
-
-<!-- Templates: side bar listview with each place -->
-<script type="text/template" id="sidebar-item-template">
-    <% app.placesFiltered.each(function(item, index, list) { %>
-        <div class="list-group">
-            <a href="#" class="list-group-item" data-id="<%= index %>">
-                <h4><div class="listview-title"><%= item.get("name") %></div></h4>
-                <p class="listview-address hidden-xs"><%= item.get("address") %></p>
-            </a>
-        </div>
-    <% }); %>
-</script>
-
-<!-- Template: title showing the number of places in the listview -->
-<script type="text/template" id="num-places-template">
-    <%
-        var msg = "<h4>Showing " + app.placesFiltered.length + " great place" + (app.placesFiltered.length > 1 ? "s" : "") + "</h4>";
-        if (app.placesFiltered.length == 0) {
-            msg = "No places found";
-        }
-    %>
-    <%= msg %>
-</script>
-
 <!-- Template: Google Maps InfoWindow pop-up -->
 <script type="text/template" id="map-infowindow-template">
         <div id="content" class="col-xs-12">
@@ -153,20 +154,6 @@
 
 <!--  -->
 
-
-<!--
-      SCRIPTS
--->
-<script type="text/javascript" src='http://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyCx-9twHn2bYrasU_59Cn8J-OSzRD0Lkh4&libraries=places&signed_in=true'></script>
-<script src="js/jquery.js"></script>
-<script src="js/jquery.slimscroll.js"></script>
-<script src="js/underscore.js"></script>
-<script src="js/backbone.js"></script>
-<script src="js/bootstrap.js"></script>
-<script src="js/model.js"></script>
-<script src="js/views.js"></script>
-<script src="js/common.js"></script>
-<script src="js/app.js"></script>
 <div id="debug"></div>
 
 </body>

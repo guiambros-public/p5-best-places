@@ -6,18 +6,13 @@
 var Map = (function () {
     'use strict';
 
-    /*
-       config, map, icon_marker, icon_shadow
-       are properties defining the map configuration and overall layout
-     */
+    // define map properties: config, map, icon_marker, icon_shadow
     var config = {
-        el_id: "map-canvas-box",
-        location: "",
         center_radius: "40.7590615,-73.969231", // Manhattan
         radius: '50',
         style: [ { "stylers": [
-                  { "saturation": -32 },
-                  { "hue": "#0099ff" }
+                 { "saturation": -32 },
+                 { "hue": "#0099ff" }
             ]}],
         options: { zoom: 15,
                    disableDefaultUI: true,
@@ -25,7 +20,6 @@ var Map = (function () {
                    minZoom: 11,
                    center: {}
         },
-
         max_tips: 30
     };
 
@@ -35,7 +29,8 @@ var Map = (function () {
         marker = {},
         marker_shadow = {},
         center_radius_obj = {},
-        venue_location = {};
+        venue_location = {},
+        self = {};
 
     var icon_marker = {
         anchor: new google.maps.Point(16, 42),
@@ -48,67 +43,44 @@ var Map = (function () {
         scaledSize: new google.maps.Size(38, 45)
     };
 
-    var self = {};
 
+    /*  Map initialization
 
-    /*
-       Public method - Map initialization
-
-       This follows the standard procedure on Google Maps API v3, by creating
-       the LatLng object, creating the map, and applying the styling defined
-       above.
-
-        It also adds a click event trigger on the map, that closes the
-        infowindow (if open). This is the intuitive user behavior.
+        Creates the map, applies the styling defined above, and add click events
      */
     var initialize = function ( el ) {
-        // save context, for later use
         self = this;
 
-        // create location object for the center of the radius
-        // (used later for search service)
-        var loc_array = config.center_radius.split( "," ).map( Number );
-        center_radius_obj = new google.maps.LatLng( loc_array[0], loc_array[1] );
-
-        // create location object
-        config.location = config.location || config.center_radius || "64.1748683,-51.7382954"; // North Pole, as last option
-        var loc_array = config.location.split( "," ).map( Number );
-        config.options.center = new google.maps.LatLng( loc_array[0], loc_array[1] );
-
-        // create map object
-        config.el = el || config.el;
-        map = new google.maps.Map( document.getElementById( config.el ), config.options );
-
+        // create map centered on `center_radius`
+        var loc = config.center_radius.split( "," ).map( Number );  // convert to array of numbers
+        center_radius_obj = new google.maps.LatLng( loc[0], loc[1] );
+        config.options.center = center_radius_obj;
+        map = new google.maps.Map( document.getElementById( el ), config.options );
         map.setOptions( { styles: config.style } );
 
-        // create initial objects
+        // create shell objects - service, markers, shadow, infownd
         service = new google.maps.places.PlacesService( map );
         marker  = new google.maps.Marker({});
         marker_shadow  = new google.maps.Marker({});
         infownd = new google.maps.InfoWindow();
 
-        // add event to close infowindow when you click anywhere on the map. Improves usability.
+        // close infowindow when you click anywhere on the map, for better usability
         google.maps.event.addListener(map, "click", function() {
             infownd.close()
         });
     };
 
 
-    /*
-        Public Method - Search
+    /*  Map search
 
-        This function searches for a specific location using Google Places API.
-        To avoid false positives, search on a radius of 50 miles around
-        Manhattan, and limited to NY state.
-
-        This function returns an asynchronous promise, so the caller has to
-        check for its completion (i.e., using `.done()`).
+        Search for a specific location, on a radius of config.radius miles around
+        Manhattan, in NY state only. This function returns a promise.
      */
     var search = function ( name, item ) {
         var request = {
             location: center_radius_obj,
             radius: config.radius,
-            query: name + ", " + item.get("address") + ", NY"
+            query: name + ", " + item.address + ", NY"
         };
         var deferred = new $.Deferred();
 
@@ -126,23 +98,21 @@ var Map = (function () {
 
 
     /*
-        Public Method - Create Map Markers
+        Create Map Markers
 
-        This function create map markers. It uses two markers - one for the
-        shadow, plus the specific icon returned by Foursquare's API (there are
-        icons for bars, restaurants, party, etc).
+        This function create twp map markers - one for the shadow, one for the icon.
+        (bars, restaurants, party, etc).
 
-        If the marker was found on Foursquare, adds an event click trigger to
-        the marker pointing to marker_onClick().
+        If the marker was found on Foursquare, point click event to marker_onClick().
      */
     var createMarker = function( loc_obj, name, fsq_obj ) {
-        marker.setMap(null);                        // remove previous markers
+        marker.setMap(null);  // remove previous markers
         marker_shadow.setMap(null);
-        map.panTo( loc_obj.geometry.location );     // center map
+        map.panTo( loc_obj.geometry.location ); // center map
         venue_location = loc_obj;
         self.fs = fsq_obj;
 
-        // create shadow marker, but only if available
+        // create shadow marker, but only if tips were found on foursquare
         if (typeof fsq_obj.tips != 'undefined') {
 
             // create location markers
@@ -175,7 +145,7 @@ var Map = (function () {
     };
 
     /*
-        Private method - Proxy function to handle clicks on Markers
+        Private method - handles clicks on Markers
 
         When a click on a Marker is received, the information is extracted
         from Google Maps and passed to create the InfoWindow.
@@ -193,10 +163,9 @@ var Map = (function () {
 
 
     /*
-        Private method - Function to handle clicks on Markers
+        Private method - create infoWindow overlay
 
-        This function is called to handle clicks on Markers. It retrieves
-        information about the tips available for this specific location
+        Retrieves information about the tips available for this specific location
         (stored on properties of this object - self.fs, map), and populate the
         DOM accordingly.
 
@@ -204,15 +173,15 @@ var Map = (function () {
         the PREV/NEXT arrows.
 
         There is a limit of 30 tips per call on Foursquare's API. It is
-        possible to expand this number, but it'd increase the complexity
-        unecessarily.
+        possible to expand this number, but not necessary for this proof-of-concept.
      */
     var create_infownd = function( i, window_name ) {
         var tip = self.fs.get_tip(i);
+        var html = "";
 
         if (typeof tip == 'undefined') {
             var template_fn = _.template( $("#map-infowindow-template-error" ).html());
-            content_string = template_fn();
+            html = template_fn();
         }
         else {
             var total_tips = self.fs.tips.response.tips.count;
@@ -222,11 +191,10 @@ var Map = (function () {
                 tip: tip,
                 total_tips: Math.min( total_tips, self.config.max_tips)
             }
-            var content_string = "";
             var template_fn = _.template( $("#map-infowindow-template" ).html());
-            content_string = template_fn( data_bag );
+            html = template_fn( data_bag );
         };
-        infownd.setContent( content_string );
+        infownd.setContent( html );
         infownd.open( map, marker );
 
         $(".arrow-left").click(function(){
@@ -259,16 +227,12 @@ var Map = (function () {
 var Foursquare = (function () {
     'use strict';
 
-    /*
-        config, venue, tips
-        Properties to handle overall configuration, and store returned values
-     */
+    // fsq configuration - API endpoints and access keys
     var config = {
         client_id: "NV4ZGMW3U444RSQPTBPNCFDYBTYTQ1WKRRKBYLB4YSQ1BH2T",
         secret: "UHJHNVV2TMIHZUNP2J13ZPWP5F1XI0IRX3B3SAX2B4QMCVJX",
         search_venue_url: "https://api.foursquare.com/v2/venues/search?ll={%GEOCODE%}&query={%NAME%}&limit=1&intent=checkin&radius=5&client_id={%CLIENT_ID%}&client_secret={%SECRET%}&v={%DATE_YYYYMMDD%}",
         tips_url: "https://api.foursquare.com/v2/venues/{%VENUE_ID%}/tips?client_id={%CLIENT_ID%}&client_secret={%SECRET%}&v={%DATE_YYYYMMDD%}"
-        // &client_id=NV4ZGMW3U444RSQPTBPNCFDYBTYTQ1WKRRKBYLB4YSQ1BH2T&secret=UHJHNVV2TMIHZUNP2J13ZPWP5F1XI0IRX3B3SAX2B4QMCVJX&v=20150614
     };
 
     var venue = {},
@@ -277,18 +241,15 @@ var Foursquare = (function () {
 
 
     /*
-        Public function, to return the tips for one specific location
-        It receives the venue name, and a GoogleMaps LatLng object.
+        get_reviews - return the tips for one specific location.
+        It receives the venue name and a GoogleMaps LatLng object, returns
+        a Foursquare object
 
-        In order to retrieve the tips, we first need to search Foursquare for
-        the specific venue, looking at the specific lat/long coordinates, and
-        the venue name. Upon successful return of a venue, we then query
-        Foursquare again for tips on this specific venue.
+        First we search Foursquare for the specific venue and lat/long coords.
+        Upon successful return of a venue, we then query Foursquare again to
+        retrieve the tips.
 
-        This function returns a Promise to the caller. Upon successful return
-        from the API, the promise is ressolved and the venue (useful for the
-        icon) and venue tips are returned. If there's an error, degrade
-        gracefully.
+        This function returns a Promise. If there's an error, degrade gracefully.
      */
     var get_reviews = function( name, loc_obj ) {
         var deferred = new $.Deferred();
@@ -314,7 +275,7 @@ var Foursquare = (function () {
                             deferred.resolve( venue, venue_tips );
                         })
                         .fail( function(){
-                            console.warn( "Error retrieving tips from Foursquare" );
+                            console.warn( "Error retrieving tips from Foursquare. Degrading gracefully." );
                             deferred.reject();
                         });
                 }
