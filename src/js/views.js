@@ -1,37 +1,59 @@
 var app = app || {};
 
-(function ($) {
+$(function() {
     'use strict';
 
-    app.AppView = Backbone.View.extend({
-        model: app.placesFiltered,
-        el: "#listview-items-container",
-        events: {
-            'click a': 'sidebar_click',
-        },
+    var viewModel = function() {
 
-        /*  This function takes care of the view initialization.
+        var self = this;
 
-            - The Backbone collection is duplicated, so we can do filtering
-              without impacting the original collection.
-            - Events are bound to the initial object context, and the `reset`
-              event triggers a new render(). Google Maps is initialized and shown.
-            - jQuery slimScroll is inserted, for non-touch devices
-         */
-        initialize: function () {
-            // clone collection for filtering
-            app.placesFiltered = new Backbone.Collection( app.places.toJSON() );
+        self.search_box = ko.observable();
+        self.search_desc_checkbox = ko.observable(true);
+        self.filteredPlaces = ko.computed(function(){
+            var dummy = self.search_desc_checkbox();  // force reload when toggling checkbox
+            //console.info("entering ko.computed(). activeFilter = [" + self.activeFilter() +
+            //             "], checkbox [" + self.search_desc_checkbox() + "]");
+            if ( self.search_box() ){
+                return ko.utils.arrayFilter( app.model(), self.filter_fn );
+            } else {
+                return app.model();
+            }
+            return app.model();
+        }).extend({ notify: 'always' });;
 
+        // update the filtered model & recompose the message with # of results found
+        self.msg_filter_result = ko.computed(function() {
+            var len = self.filteredPlaces().length;
+            return (len == 0) ? "No places found" : ("Showing " + len + " great place" + (len > 1 ? "s" : ""));
+        });
+
+        self.setActiveFilter = function( event ){
+            var content = $( "#search-field" ).val().toLowerCase();
+            var len = 0;
+            var msg = "";
+            self.activeFilter( content );
+        };
+
+        // Initialize model, filters, google maps, scroll bars
+        self.initialize = function () {
+            //var msg = "",
+            //    len = 0;
+
+            // set event callbacks
+            //self.filter.subscribe( self.filter_places );
             // set event triggers on change for the search field (both keyboard & mouse/paste)
-            $( '#search-field' ).on( 'input propertychange paste', this.filter_results );
-            $( '#search-checkbox' ).change( this.filter_results );
+            //$( '#search-field' ).on( 'input propertychange paste', self.setActiveFilter );
+            //$( '#search-checkbox' ).change( self.setActiveFilter );
 
-            this.render();
+            //self.setActiveFilter();
 
-            // set up events
-            _.bindAll( this, 'filter_results' );
-            _.bindAll( this, 'sidebar_click' );
-            app.placesFiltered.on( 'reset', this.render, this );
+            // app.modelFiltered = ko.computed(function() {
+            //     return ko.utils.arrayFilter( app.model(), self.filter_fn);
+            // }, app.model);
+
+            //self.filter("bi");
+            //console.warn("Original model: " + app.model().length);
+            //console.warn("Filtered model: " + app.modelFiltered().length);
 
             // initialize Google Map
             app.map = new Map();
@@ -44,38 +66,51 @@ var app = app || {};
                         height: '2000px'
                     });
                 });
+            };
+
+            ko.applyBindings( self.filteredPlaces() );
+	    };
+
+        // This function manages the search functionality, filtering the
+        // model according to the content of the search-field.
+        self.filter_fn = function(i) {
+            var found = false;
+            var searchDescription = $( "#search-checkbox" ).is( ":checked" );
+            var str = self.search_box();
+            console.info("searchDescription = " + searchDescription);
+            console.info("search_str = " + str);
+            if ( str.length == 0 ) {
+                found = true;
             }
-	    },
-
-        /*  This function renders the collection, using Underscore's templating system
-         */
-    	render: function () {
-            var template_fn = _.template( $("#sidebar-item-template").html() );
-            this.$el.html( template_fn() );
-
-            template_fn = _.template( $("#num-places-template").html() );
-            $("#num-places").html( template_fn() );
-            return this;
-        },
-
+            else {
+                found = i.name.toLowerCase().indexOf( str ) > -1 ||
+                        i.address.toLowerCase().indexOf( str ) > -1;
+                if ( searchDescription ) {
+                    found = found || i.description.toLowerCase().indexOf( str ) > -1;
+                }
+            };
+            console.info("found = " + found);
+            return found;
+        };
 
         /* This function manages click events on the sidebar with the destinations
 
-           First we obtain the id of the clicked element via DOM's data-id element.
-           We then populate the description box (image and text), and start a
-           search for this destination's address on Google Maps.
-
-           If the destination is found, we use the geocoordinates and name to
-           search on Foursquare, and store the values on the object property fsq.
+           Obtain the id of the clicked element, then populate description box and
+           search for this destination's address on Google Maps. If the destination
+           is found, search on Foursquare, and store results on `fsq` property.
         */
-        sidebar_click: function(e) {
+        self.sidebar_click = function(data, e) {
             e.preventDefault();
-            $( "a" ).toggleClass( "active", false );                    // reset everything to default state
             var clicked_el = $( e.currentTarget );
-            clicked_el.toggleClass( "active", true );                   // mark clicked element as active
-
-            // find the item clicked
             var id = clicked_el.data( "id" );
+
+            // reset to default state, and mark clicked item as active
+            $( "a" ).toggleClass( "active", false );
+            clicked_el.toggleClass( "active", true );
+
+            //console.warn(id);
+            //debugger;
+            return;
             var item = app.placesFiltered.models[id];
 
             // populate description and image
@@ -104,31 +139,19 @@ var app = app || {};
                 .fail( function () {
                     console.warn("Google failed");
                 });
-        },
+        };
 
+    };
 
-        /* This function manages the search functionality, filtering the
-           collection according to the content of the search-field.
+    // wait for data json to load before initializing view
+    app.status
+        .done(function(){
+            app.model = ko.observableArray( app.data );
+            app.view  = new viewModel();
+            app.view.initialize();
+        })
+        .fail(function(){
+            console.log("App loader - ERROR loading model JSON file" );
+        });
 
-           This is triggered by any change to the search-field, either via
-           keyboard or paste via mouse.
-
-           Some basic string manipulation is done to make sure that the search
-           is case-insensitive. It also controls the serch inside
-           descriptions, if selected.
-        */
-        filter_results: function(e) {
-            var search_text = $("#search-field").val().toLowerCase();
-            var filterFn = function(collection) {
-                var ret = collection.get('name').toLowerCase().indexOf(search_text) > -1 ||
-                          collection.get('address').toLowerCase().indexOf(search_text) > -1;
-                if ( $("#search-checkbox").is(":checked") ) {
-                    ret = ret || collection.get('description').toLowerCase().indexOf( search_text ) > -1;
-                }
-                return ret;
-            };
-
-            app.placesFiltered.reset ( filteredCollection( app.places, filterFn ) );    // see common.js for filteredCollection()
-        },
-    });
-})(jQuery);
+});

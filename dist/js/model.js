@@ -1,1 +1,19 @@
-var app=app||{};!function(){"use strict";var e=Backbone.Model.extend({defaults:{id:"",name:"",address:"",site:"",image:"",description:"",latitude:"",longitude:"",favorite:!1},initialize:function(e){}}),i=Backbone.Collection.extend({model:e,status:{},initialize:function(){var i=this;this.status=$.getJSON("db/data.json",function(t){$.each(t,function(a){var n=new e({id:a,name:t[a].name,address:t[a].address,site:t[a].website,image:t[a].image,description:t[a].description});i.add(n)})})}});app.places=new i}();
+/*global Backbone */
+var app = app || {};
+
+(function () {
+    'use strict';
+    app.data = [];
+    app.status = $.getJSON("db/data.json", function (data) {
+        $.each(data, function(key) {
+            app.data.push({
+                "id": key,
+                "name": data[key].name,
+                "address": data[key].address,
+                "site": data[key].website,
+                "image": data[key].image,
+                "description": data[key].description
+            });
+        });
+    });
+})();

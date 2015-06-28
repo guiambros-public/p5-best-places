@@ -65,6 +65,11 @@ Many sources were used as inspiration or for troubleshooting. The list below has
 - [Create the view in jQuery's DOMReady](http://stackoverflow.com/questions/10371539/why-define-anonymous-function-and-pass-jquery-as-the-argument/10372429#10372429)
 
 
+### Knockout.js
+
+- [Filtering Table Data with Knockout JS](http://ryanrahlf.com/filtering-table-data-with-knockout-js/)
+
+
 ### Backbone.js
 
 - [Using data-id to retrieved the clicked element, on situations where you have a single view, with multiple models](https://lostechies.com/derickbailey/2011/10/11/backbone-js-getting-the-model-for-a-clicked-element/)

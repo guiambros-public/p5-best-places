@@ -1,5 +1,5 @@
 'use strict';
-var COMPRESS = true;       // false = skip minification. Useful for debugging
+var COMPRESS = false;       // false = skip minification. Useful for debugging
 
 // gulp control variables
 var gulp = require('gulp');
@@ -43,6 +43,8 @@ var paths = {
         ,'../components/backbone.localStorage/backbone.localStorage.js'
         ,'../components/slimscroll/jquery.slimscroll.js'
         ,'../components/bootstrap/dist/js/bootstrap.js'
+        ,'../components/knockout-mapping/knockout.mapping.js'
+        ,'../components/knockoutjs/dist/knockout.js'
         ,'!_spec/*.js'
         ,'!db/**/*.js'
     ],
