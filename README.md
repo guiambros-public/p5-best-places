@@ -92,7 +92,7 @@ Many sources were used as inspiration or for troubleshooting. The list below has
 - [Filtering Table Data with Knockout JS](http://ryanrahlf.com/filtering-table-data-with-knockout-js/)
 
 
-### Backbone.js
+### ~~Backbone.js~~ (used on earlier commits, but not the final one)
 
 - [Using data-id to retrieved the clicked element, on situations where you have a single view, with multiple models](https://lostechies.com/derickbailey/2011/10/11/backbone-js-getting-the-model-for-a-clicked-element/)
 
