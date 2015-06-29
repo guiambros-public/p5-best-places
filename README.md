@@ -44,7 +44,6 @@ The maps are provided by [Google Maps API v3](https://developers.google.com/maps
 
 
 ## Graceful Degradation:
-* The site degrades gracefully:
 * If the data file can't be loaded, it displays an error message, asking to try again later
 * If Foursquare's API is not available, it simply shows the default marker and no infowindow with tips
 * If Google Maps is not available, it won't show the map, but the user can still browse and search for venues
@@ -52,7 +51,7 @@ The maps are provided by [Google Maps API v3](https://developers.google.com/maps
 
 ## Source Data
 
-The data abou the 50 places came from [complex.com](http://www.complex.com/pop-culture/2014/07/the-50-coolest-places-in-nyc-right-now/). I created a parser in node.js, to convert from html to a json file. The parser runs automatically through Gulp (see below).
+The data came from [complex.com 50 Coolest Places in NYC](http://www.complex.com/pop-culture/2014/07/the-50-coolest-places-in-nyc-right-now/). I created a parser in node.js, to convert from html to a json file. The parser runs automatically through Gulp (see below).
 
 
 ## Build System
