@@ -94,5 +94,3 @@ Many sources were used as inspiration or for troubleshooting. The list below has
 - [How to display which media query is being used](http://stackoverflow.com/questions/13730405/how-to-display-which-media-query-is-being-used)
 
 - [Detecting touch screen devices with Javascript](http://stackoverflow.com/questions/3974827/detecting-touch-screen-devices-with-javascript)
-
-
