@@ -67,7 +67,7 @@ For debugging purposes, you can set the COMPRESS variable to false on Gulpfile.j
 
 Many sources were used as inspiration or for troubleshooting. The list below has the most relevant references:
 
-### Javascript Design Patterns
+#### Javascript Design Patterns
 
 - [Mastering the Module Pattern](http://toddmotto.com/mastering-the-module-pattern/)
 
@@ -80,7 +80,7 @@ Many sources were used as inspiration or for troubleshooting. The list below has
 - [Create the view in jQuery's DOMReady](http://stackoverflow.com/questions/10371539/why-define-anonymous-function-and-pass-jquery-as-the-argument/10372429#10372429)
 
 
-### Knockout.js
+#### Knockout.js
 
 
 - [Knockout Official Documentation](http://knockoutjs.com/documentation/introduction.html)
@@ -92,7 +92,7 @@ Many sources were used as inspiration or for troubleshooting. The list below has
 - [Filtering Table Data with Knockout JS](http://ryanrahlf.com/filtering-table-data-with-knockout-js/)
 
 
-### ~~Backbone.js~~ (used on earlier commits, but not the final one)
+#### ~~Backbone.js~~ (used on earlier commits, but not the final one)
 
 - [Using data-id to retrieved the clicked element, on situations where you have a single view, with multiple models](https://lostechies.com/derickbailey/2011/10/11/backbone-js-getting-the-model-for-a-clicked-element/)
 
@@ -101,14 +101,14 @@ Many sources were used as inspiration or for troubleshooting. The list below has
 - [Developing Backbone.js Applications](http://addyosmani.github.io/backbone-fundamentals/#events)
 
 
-### Maps & Markers
+#### Maps & Markers
 
 - [Inspiration for the shadow markers](http://www.foodspotting.com/find/within/40.74368139882518,-73.99250956170653/40.769687713159634,-73.91182871453856)
 
 - [Creating SVG images in pure CSS/HTML](http://metafizzy.co/blog/making-svg-buttons/)
 
 
-### CSS Tricks
+#### CSS Tricks
 
 - Ellipse My Text… - [source 1](https://css-tricks.com/line-clampin/), [source 2](http://html5hub.com/ellipse-my-text/), [source 3](http://jsfiddle.net/nLf0Ltf6/2/)
 
