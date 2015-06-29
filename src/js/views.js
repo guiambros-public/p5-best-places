@@ -27,7 +27,7 @@ $(function() {
         // This function manages the search functionality, filtering the
         // model according to the content of the search-field.
         function filter_fn(i) {
-            var str = search_box();
+            var str = search_box().toLowerCase();
             var checkbox = search_desc_checkbox();
             if ( str.length == 0 ) {
                 return true;
@@ -65,7 +65,7 @@ $(function() {
             e.preventDefault();
             var clicked_el = $( e.currentTarget );
             var id = clicked_el.data( "id" );
-            var item = filteredPlaces()[id];
+            var item = app.model()[id];
             var name = item.name;
 
             // reset to default state, and mark clicked item as active
@@ -117,6 +117,7 @@ $(function() {
         })
         .fail(function(){
             console.log("App loader - ERROR loading model JSON file" );
+            $("#body-instructions").html("<p>Error loading data file. Please check your connection or try again later.</p>");
         });
 
 });

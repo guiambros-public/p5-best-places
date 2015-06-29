@@ -44,8 +44,11 @@ The maps are provided by [Google Maps API v3](https://developers.google.com/maps
 
 
 ## Graceful Degradation:
-* The site degrades gracefully for most parts. If Foursquare's API is not available, it simply shows the default marker (and no tips), but it doesn't break the site
-* If Google Maps is not available, it won't show, but the browse and search functionality can still be used
+* The site degrades gracefully:
+* If the data file can't be loaded, it displays an error message, asking to try again later
+* If Foursquare's API is not available, it simply shows the default marker and no infowindow with tips
+* If Google Maps is not available, it won't show the map, but the user can still browse and search for venues
+
 
 ## Source Data
 
