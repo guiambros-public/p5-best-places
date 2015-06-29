@@ -357,30 +357,15 @@ var Foursquare = (function () {
 });
 
 
+/* start-livereload-debug */
 
-// Filtered Collection Decorator pattern, by Derick Bailey
-//
-// Given an original collection, returns a copy using the filter function
-// passed as a parameter
-//
-// Source:
-// http://spin.atomicobject.com/2013/08/08/filter-backbone-collection/
-//
-var filteredCollection = function(original, filterFn) {
+    //   LiveReload hack refresh.
+    //
+    //   Fixes the issue with Chrome, not refresh the page unless when mouse is over the viewport
+    //   This code is automatically removed by the build system
+    //
+    setInterval(function(){
+        document.getElementsByTagName('body')[0].focus();
+    }, 250);
 
-    var filtered;
-    filtered = new original.constructor();
-    filtered._callbacks = {};   // Remove events associated with original
-
-    filtered.filterItems = function(filter) {
-        var items;
-        items = original.filter(filter);
-        filtered._currentFilter = filterFn;
-        return filtered.reset(items);
-    };
-
-    original.on('reset change destroy', function() {     // Refilter when original collection is modified
-        return filtered.filterItems(filtered._currentFilter);
-    });
-    return filtered.filterItems(filterFn);
-};
+/* end-livereload-debug */

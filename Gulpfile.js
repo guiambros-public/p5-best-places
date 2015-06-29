@@ -1,5 +1,5 @@
 'use strict';
-var COMPRESS = false;       // false = skip minification. Useful for debugging
+var COMPRESS = true;       // false = skip minification. Useful for debugging
 
 // gulp control variables
 var gulp = require('gulp');
@@ -17,10 +17,11 @@ var jpegoptim = require('imagemin-jpegoptim');
 var imgResize = require('gulp-image-resize');
 
 // code optimizers
-var stripDebug = require('gulp-strip-debug');
 var minifyHTML = require('gulp-minify-html');
 var minifyCSS = require('gulp-minify-css');
 var minifyJS = require('gulp-uglify');
+var stripDebug = require('gulp-strip-debug');
+var stripCode = require('gulp-strip-code');
 
 // code linters & testing
 var jshint = require('gulp-jshint');
@@ -37,14 +38,11 @@ var paths = {
     js: [
          'js/**/*.js*'
         ,'../components/jquery/dist/jquery.js'
-        ,'../components/knockout/dist/knockout.js'
-        ,'../components/underscore/underscore.js'
-        ,'../components/backbone/backbone.js'
-        ,'../components/backbone.localStorage/backbone.localStorage.js'
-        ,'../components/slimscroll/jquery.slimscroll.js'
-        ,'../components/bootstrap/dist/js/bootstrap.js'
         ,'../components/knockout-mapping/knockout.mapping.js'
         ,'../components/knockoutjs/dist/knockout.js'
+        ,'../components/underscore/underscore.js'
+        ,'../components/slimscroll/jquery.slimscroll.js'
+        ,'../components/bootstrap/dist/js/bootstrap.js'
         ,'!_spec/*.js'
         ,'!db/**/*.js'
     ],
@@ -110,11 +108,16 @@ gulp.task('lint', function() {
 gulp.task('minify_js', function() {
     return gulp.src( sourceDir(paths.js) )
     .pipe( changed( DEST ) )
+    .pipe( gulpif( COMPRESS, stripCode({
+                                start_comment: "start-livereload-debug",
+                                end_comment: "end-livereload-debug"
+                            })))
     .pipe( gulpif( COMPRESS, minifyJS() ) )
     .pipe( gulpif( COMPRESS, stripDebug() ) )
     .pipe( gulp.dest( DEST + "/js" ) )
     .pipe(livereload());
 });
+
 
 gulp.task('minify_html', function() {
     return gulp.src( sourceDir(paths.html) )

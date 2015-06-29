@@ -1,0 +1,1 @@
+setInterval(function(){document.getElementsByTagName("body")[0].focus()},250);
