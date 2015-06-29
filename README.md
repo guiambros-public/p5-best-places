@@ -7,9 +7,11 @@ This is a simple proof-of-concept application,  built as part of Project 5 for [
 
 ## Site Structure
 
-The site was built using Backbone.js and Twitter's Bootstrap. The structure followed the classic MVVC pattern, with good isolation between the view and the model.
+The site was built using ~~Backbone.js~~ Knockout.js, Underscore.js and Twitter's Bootstrap. The structure followed the classic MVVM pattern, with good isolation between the view and the model.
 
-The map is provided by [Google Maps API v3](https://developers.google.com/maps/documentation/javascript), and tips are provided by [Foursquare API](https://developer.foursquare.com/). API keys are needed to run the application.
+The model was implemented using Knockout's observableArray. The filtering is simply a computedObject, that dynamically extracts a subset of the original dataset, according to search terms.
+
+The maps are provided by [Google Maps API v3](https://developers.google.com/maps/documentation/javascript), and tips are provided by [Foursquare API](https://developer.foursquare.com/). API keys are needed to run the application.
 
 
 ## Main Functionality
@@ -24,17 +26,26 @@ The map is provided by [Google Maps API v3](https://developers.google.com/maps/d
 
 ## UX and Technical details:
 
-* Search happens instantly, by filtering the collection and re-rendering the view with the filtered locations
-* The number of locations found is displayed on top of the locations
-* When the map InfoWindow is open and you click elsewhere on the map, the infowindow is closed automatically
+* Search happens instantly, by filtering the model and re-rendering the view with the filtered locations, using KO's computedObject
+* The number of locations found is displayed on top of the locations, using an observable variable
 * The marker is customized with Foursquare's icon (e.g., Park, Bar, Restaurant, Hotel, etc)
 * If the location is found on Foursquare, the Google Maps InfoWindow shows the first tip. You can click on next/previous arrows to see more tips (limited to 30)
-* If the location is not found on Foursquare, the default Google Maps red marker is used (e.g., try "*Sara Roosevelt Park*")
-* The site degrades gracefully. If Foursquare's API is not available, it won't throw an error. If Google Maps is not available, it won't show, but the browse and search functionality can still be used
+* When the map InfoWindow is open and you click elsewhere on the map, the infowindow is closed automatically
+* If the location is not found on Foursquare, the default Google Maps red marker is used (e.g., try "Sara Roosevelt Park")
+* When the map InfoWindow is open and you click elsewhere on the map, the infowindow is closed automatically
 * When you click on the search input field, there's a subtle shadown effect to show the field is not selected
-* Fully responsive. On smaller screens (phone, tablet), the site resizes automatically and eliminates some non-essential parts
+
+
+## Responsive Design:
+
+* Fully responsive. On smaller screens (phone, tablet), the site resizes automatically and eliminates some non-essential parts, like description
+* The map size adjusts automatically to use the the full height of the device, using some CSS magic
 * The description is truncated to 12 lines (some places have really long descriptions). The method used truncates the description at the end of a word, and shows an ellipsis. It works, but somewhat buggy and can be improved.
 
+
+## Graceful Degradation:
+* The site degrades gracefully for most parts. If Foursquare's API is not available, it simply shows the default marker (and no tips), but it doesn't break the site
+* If Google Maps is not available, it won't show, but the browse and search functionality can still be used
 
 ## Source Data
 
@@ -45,7 +56,9 @@ The data abou the 50 places came from [complex.com](http://www.complex.com/pop-c
 
 I used [Gulp](http://gulpjs.com/) as the build system. Files are minified, images are compressed, debug logs are removed, and final files are moved from the `/src` to the `/dist` directory.
 
-[Bower](http://bower.io/) was also used to install components required by the application, like Bootstrap, Backbone.js and Underscore.js.
+[Bower](http://bower.io/) was used to install components required by the application, like Bootstrap, Knockout.js and Underscore.js.
+
+For debugging purposes, you can set the COMPRESS variable to false on Gulpfile.js, and it'll disable minification and will keep console.log statements intact. It will also improve performance a bit.
 
 
 ## References:
@@ -66,6 +79,13 @@ Many sources were used as inspiration or for troubleshooting. The list below has
 
 
 ### Knockout.js
+
+
+- [Knockout Official Documentation](http://knockoutjs.com/documentation/introduction.html)
+
+- [Utility Functions in KnockoutJS](http://www.knockmeout.net/2011/04/utility-functions-in-knockoutjs.html)
+
+- [Knockout JS Filtering](http://www.madebymarket.com/blog/dev/filtering-selects-with-knockout-js.html)
 
 - [Filtering Table Data with Knockout JS](http://ryanrahlf.com/filtering-table-data-with-knockout-js/)
 
