@@ -1,12 +1,25 @@
-/*
-  -----------------------------------
-    Map class
-  -----------------------------------
-*/
+/**
+ * @fileoverview This file contains the classes for Map and Foursquare, handling the API
+ * and functionality to plot maps and retrieve tips from Foursquare.
+ *
+ * @author Gui Ambros gui@wrgms.com
+ */
+
+
+/**
+ * This is the Map class. It handles Google Maps API, searching
+ * for venues, and plotting markers
+ *
+ * @constructor Map
+ */
 var Map = (function () {
     'use strict';
 
-    // define map properties: config, map, icon_marker, icon_shadow
+    /**
+     * map configuration
+     * @public
+     * @memberof! Map#
+     */
     var config = {
         center_radius: "40.7590615,-73.969231", // Manhattan
         radius: '50',
@@ -23,30 +36,39 @@ var Map = (function () {
         max_tips: 30
     };
 
-    var map = {},
-        service = {},
-        infownd = {},
-        marker = {},
-        marker_shadow = {},
-        center_radius_obj = {},
-        venue_location = {},
-        self = {};
+    /** map object */
+    var map = {};
 
-    var icon_marker = {
-        anchor: new google.maps.Point(16, 42),
-        scaledSize: new google.maps.Size(32, 32),
-        url: ""
+    /** service object */
+    var service = {};
+
+    /** venue_location geoloc object */
+    var venue_location = {};
+
+    // Miscelaneous internal objects
+    var infownd = {};
+    var marker = {};
+    var marker_shadow = {};
+    var center_radius_obj = {};
+    var icon = {
+            marker: {
+                anchor: new google.maps.Point(16, 42),
+                scaledSize: new google.maps.Size(32, 32),
+                url: ""
+            },
+
+            shadow: {
+                url: "/assets/images/map-shadow.png",
+                scaledSize: new google.maps.Size(38, 45)
+            }
     };
-
-    var icon_shadow = {
-        url: "/assets/images/map-shadow.png",
-        scaledSize: new google.maps.Size(38, 45)
-    };
+    var self = {};
 
 
-    /*  Map initialization
-
-        Creates the map, applies the styling defined above, and add click events
+    /**
+     * Creates the map, applies the styling defined above, and add click events
+     * @public
+     * @memberof! Map#
      */
     var initialize = function ( el ) {
         self = this;
@@ -71,10 +93,13 @@ var Map = (function () {
     };
 
 
-    /*  Map search
-
-        Search for a specific location, on a radius of config.radius miles around
-        Manhattan, in NY state only. This function returns a promise.
+    /**
+     * Search for a specific location, on a radius of config.radius miles around
+     * Manhattan, in NY state only.
+     *
+     * @public
+     * @memberof! Map#
+     * @returns {Object.Deferred} A deferred Promise(), linked to the search result on Google Maps
      */
     var search = function ( name, item ) {
         var request = {
@@ -97,42 +122,42 @@ var Map = (function () {
     };
 
 
-    /*
-        Create Map Markers
-
-        This function create twp map markers - one for the shadow, one for the icon.
-        (bars, restaurants, party, etc).
-
-        If the marker was found on Foursquare, point click event to marker_onClick().
+    /**
+     * This function create two map markers - one for the shadow, one for the icon.
+     * The icon is customized according to venue category on Foursquare (bars, restaurants, party, etc).
+     * If venue was found on Foursquare, create click event linked to marker_onClick().
+     *
+     * @public
+     * @memberof! Map#
+     * @see {Map#marker_onClick}
      */
     var createMarker = function( loc_obj, name, fsq_obj ) {
-        marker.setMap(null);  // remove previous markers
+        marker.setMap(null);                      // remove previous markers
         marker_shadow.setMap(null);
-        map.panTo( loc_obj.geometry.location ); // center map
+        map.panTo( loc_obj.geometry.location );   // center map
         venue_location = loc_obj;
         self.fs = fsq_obj;
 
-        // create shadow marker, but only if tips were found on foursquare
-        if (typeof fsq_obj.tips != 'undefined') {
+        if (typeof fsq_obj.tips != 'undefined') { // if found tips on foursquare
 
             // create location markers
             marker_shadow = new google.maps.Marker({
                 position: loc_obj.geometry.location,
                 map: map,
-                icon: icon_shadow,
+                icon: icon.shadow,
                 zIndex: 0,
                 clickable: false,
             });
-            icon_marker.url = fsq_obj.venue.icon_url;
+            icon.marker.url = fsq_obj.venue.icon_url;
 
             marker = new google.maps.Marker({
                 map: map,
                 position: loc_obj.geometry.location,
                 title: name,
-                icon: icon_marker,
+                icon: icon.marker,
                 zIndex: 1,
             });
-            google.maps.event.addListener( marker, 'click', marker_onClick ); // add click event
+            google.maps.event.addListener( marker, 'click', marker_onClick );
         }
         else {
             console.warn("Using default marker; foursquare did not return any venue");
@@ -144,11 +169,14 @@ var Map = (function () {
         }
     };
 
-    /*
-        Private method - handles clicks on Markers
 
-        When a click on a Marker is received, the information is extracted
-        from Google Maps and passed to create the InfoWindow.
+    /**
+     * Marker Click.
+     * When a click on a Marker is received, the information is extracted
+     * from Google Maps and passed to create the InfoWindow.
+     *
+     * @private
+     * @memberof! Map#
      */
     var marker_onClick = function() {
         service.getDetails( venue_location, function( result, status ) {
@@ -162,18 +190,18 @@ var Map = (function () {
     };
 
 
-    /*
-        Private method - create infoWindow overlay
-
-        Retrieves information about the tips available for this specific location
-        (stored on properties of this object - self.fs, map), and populate the
-        DOM accordingly.
-
-        This also sets a recursive click event trigger to handle clicks on the
-        the PREV/NEXT arrows.
-
-        There is a limit of 30 tips per call on Foursquare's API. It is
-        possible to expand this number, but not necessary for this proof-of-concept.
+    /**
+     * Create infoWindow overlay.
+     * Retrieves information about the tips available for this location, populating
+     * the DOM and setting click event handlers for PREV/NEXT buttons.
+     *
+     * Note there is a limit of 30 tips per call on Foursquare's API. It is
+     * possible to expand this number, but not implemented.
+     *
+     * @private
+     * @memberof! Map#
+     * @alias Map#create_infownd
+     * @see {@link http://underscorejs.org| Underscore.js temoplate documentation}
      */
     var create_infownd = function( i, window_name ) {
         var tip = self.fs.get_tip(i);
@@ -219,15 +247,18 @@ var Map = (function () {
 
 
 
-/*
-  -----------------------------------
-    Foursquare class
-  -----------------------------------
+
+
+/**
+ * This is the Foursquare class. It handles Foursquare API integration, searching
+ * for venues, and retrieving tips.
+ *
+ * @constructor Foursquare
  */
-var Foursquare = (function () {
+ var Foursquare = (function () {
     'use strict';
 
-    // fsq configuration - API endpoints and access keys
+    /** Configuration, API keys and base endpoints */
     var config = {
         client_id: "NV4ZGMW3U444RSQPTBPNCFDYBTYTQ1WKRRKBYLB4YSQ1BH2T",
         secret: "UHJHNVV2TMIHZUNP2J13ZPWP5F1XI0IRX3B3SAX2B4QMCVJX",
@@ -235,21 +266,26 @@ var Foursquare = (function () {
         tips_url: "https://api.foursquare.com/v2/venues/{%VENUE_ID%}/tips?client_id={%CLIENT_ID%}&client_secret={%SECRET%}&v={%DATE_YYYYMMDD%}"
     };
 
-    var venue = {},
-        tips = {},
-        self = {};
+    /** Venue object */
+    var venue = {};
+
+    /** Tips collection object */
+    var tips = {};
+
+    var self = {};
 
 
-    /*
-        get_reviews - return the tips for one specific location.
-        It receives the venue name and a GoogleMaps LatLng object, returns
-        a Foursquare object
-
-        First we search Foursquare for the specific venue and lat/long coords.
-        Upon successful return of a venue, we then query Foursquare again to
-        retrieve the tips.
-
-        This function returns a Promise. If there's an error, degrade gracefully.
+    /**
+     * Get Reviews.
+     * Return the tips for a specific location, given its name and lat/long coords.
+     * Upon successful return of a suitable venue, it retrieves retrieve the tips.
+     * This function returns a Promise.
+     *
+     * @public
+     * @memberof! Foursquare#
+     * @param {String} venue - Venue name
+     * @param {Object} LatLng - LatLng object of the desired location
+     * @returns {Object.Deferred} Deferred Promise. Upon success, returns venue and venue_tips
      */
     var get_reviews = function( name, loc_obj ) {
         var deferred = new $.Deferred();
@@ -288,9 +324,33 @@ var Foursquare = (function () {
     }
 
 
-    /*
-        Query the Foursquare API for a specific venue.
-        Auxiliary private function; returns a promise (from getJSON)
+    /**
+     * Get Tip
+     * Returns a specific tip, from the collection of Tips. Used by {@link: Map#create_infownd}
+     * to facilitate dealing with empty tips array or undefined object (if failed to retrieve tips)
+     *
+     * @public
+     * @memberof! Foursquare#
+     * @param {Int} i - index of the tip to return (0-based) from the Foursquare collection
+     * @returns {Object.Tip} The instance i-th from the Tips collection
+     */
+    var get_tip = function( i ) {
+        var tips = this.tips;
+        if ( typeof tips && !jQuery.isEmptyObject(tips) && i > -1 && i < (tips.response.tips.count-1) ) {
+            return tips.response.tips.items[i];
+        }
+        else return (undefined);
+    };
+
+
+    /**
+     * Internal method to call Foursquare API and search for venue
+     *
+     * @private
+     * @memberof! Foursquare#
+     * @param {String} venue - Name of the venue you're searching for
+     * @param {Object} LatLng - LatLng object with coords of the target location
+     * @returns {Object.Deferred} Deferred Promise() returned by getJSON
      */
     var api_search_venue = function( name, loc_obj ) {
         var url = populate_url(
@@ -303,9 +363,13 @@ var Foursquare = (function () {
     };
 
 
-    /*
-        Query the Foursquare API to retrieve tips for a specific venue
-        Auxiliary private function; returns a promise (from getJSON)
+    /**
+     * Internal method to call Foursquare API and retrieve tips for a specific venue
+     *
+     * @private
+     * @memberof! Foursquare#
+     * @param {String} venue - Foursquare venue id
+     * @returns {Object.Deferred} Deferred Promise() returned by getJSON
      */
     var api_get_venue_tips = function ( venue_id ) {
         var url = populate_url(
@@ -316,25 +380,14 @@ var Foursquare = (function () {
     };
 
 
-    /*
-        Auxiliary public function to return a specific tip, from the
-        collection of tips.
-
-        Used by create_infownd(), to deal with empty tips array or undefined
-        object (if failed to retrieve tips).
-     */
-    var get_tip = function( i ) {
-        var tips = this.tips;
-        if ( typeof tips && !jQuery.isEmptyObject(tips) && i > -1 && i < (tips.response.tips.count-1) ) {
-            return tips.response.tips.items[i];
-        }
-        else return (undefined);
-    };
-
-
-    /*
-        Populates Fourquare API URL, given a set of parameters (lat/long, venue, today's date)
-        Auxiliary private function. Returns the formatted URL.
+    /**
+     * Internal method to populates endpoint URL, given a set of parameters (lat/long, venue, name).
+     *
+     * @private
+     * @memberof! Foursquare#
+     * @param {String} base_url - Base URL of the API endpoint
+     * @param {Object} params - Parms object with name, venue_id, lat/long
+     * @returns {String} Pre-formatted URL, to be used on API calls
      */
     var populate_url = function( base_url, params ) {
         var now = new Date();
@@ -357,15 +410,17 @@ var Foursquare = (function () {
 });
 
 
+
 /* start-livereload-debug */
 
-    //   LiveReload hack refresh.
-    //
-    //   Fixes the issue with Chrome, not refresh the page unless when mouse is over the viewport
-    //   This code is automatically removed by the build system
-    //
-    setInterval(function(){
-        document.getElementsByTagName('body')[0].focus();
-    }, 250);
+  /* ---
+   * LiveReload hack refresh.
+   *
+   * This fixes the issue with Chrome, where the page is not refreshed unless when mouse
+   * is over the viewport. Note: this code is automatically removed by the build system
+   */
+  setInterval(function(){
+      document.getElementsByTagName('body')[0].focus();
+  }, 250);
 
 /* end-livereload-debug */

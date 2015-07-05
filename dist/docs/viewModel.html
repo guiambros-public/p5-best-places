@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Class: viewModel</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Class: viewModel</h1>
+
+    
+
+
+
+<section>
+
+<header>
+    <h2>
+    viewModel
+    </h2>
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+
+    
+        
+<dt>
+    <h4 class="name" id="viewModel"><span class="type-signature"></span>new viewModel<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        This is the viewModel class. It handles click events, search
+and filtering, and instantiate Map and Foursquare objects
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+        <h5 class="subsection-title">Properties:</h5>
+
+        <dl>
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>search_box</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">KO.observable</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Linked to HTML text field</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>search_desc_checkbox</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">KO.observable</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Linked to HTML checkbox</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>filteredPlaces</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">KO.computed</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Contains the filtered model, computed automatically based on search fields</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>msg_filter_result</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">KO.computed</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Message with # of records found. It is updated dynamically</td>
+        </tr>
+
+    
+    </tbody>
+</table></dl>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="views.js.html">src/js/views.js</a>, <a href="views.js.html#line20">line 20</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+            
+<dt>
+    <h4 class="name" id="filter_fn"><span class="type-signature">&lt;private, static> </span>filter_fn<span class="signature">(model_instance, <span class="optional">search text</span>, <span class="optional">search checkbox</span>)</span><span class="type-signature"> &rarr; {Boolean}</span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        This function manages the search functionality, filtering the
+model according to the checkbox and the search field (both are ko.observables)
+    </div>
+    
+
+    
+
+    
+
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>model_instance</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">Item of the model to be searched</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>search text</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    HTML field
+                
+                </td>
+            
+
+            <td class="description last">ko.observable "search_box"</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>search checkbox</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    HTML checkbox
+                
+                </td>
+            
+
+            <td class="description last">ko.observable "search_desc_checkbox"</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="views.js.html">src/js/views.js</a>, <a href="views.js.html#line83">line 83</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    True if found, False otherwise
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Boolean</span>
+
+
+    </dd>
+</dl>
+
+        
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="initialize"><span class="type-signature">&lt;static> </span>initialize<span class="signature">()</span><span class="type-signature"> &rarr; {None}</span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Initialize Map object, apply KO bindings and set up slim scroll (if needed)
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="views.js.html">src/js/views.js</a>, <a href="views.js.html#line55">line 55</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">None</span>
+
+
+    </dd>
+</dl>
+
+        
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="sidebar_click"><span class="type-signature"></span>sidebar_click<span class="signature">(element_data, element_clicked)</span><span class="type-signature"> &rarr; {None}</span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        This function is called by the HTML in response to click events on each sidebar destination
+
+The id of the clicked element is obtained, and then we populate the description box/image
+and search for this destination's address on Google Maps. If the destination
+is found, search on Foursquare, and store results on `fsq` property.
+
+Updates: <ul>
+<li> HTML - Description image </li>
+<li> HTML - Description text </li>
+<li> Calls Map.createMarker  to create a marker with foursquare info </li>
+</ul>
+    </div>
+    
+
+    
+
+    
+
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>element_data</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Not used. Default value passed by KO</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>element_clicked</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Contains the Event object of the object clicked</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="views.js.html">src/js/views.js</a>, <a href="views.js.html#line113">line 113</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    Doesn't return anything, but updates HTML and creates marker
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">None</span>
+
+
+    </dd>
+</dl>
+
+        
+
+    
+</dd>
+
+        </dl>
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Foursquare.html">Foursquare</a></li><li><a href="Map.html">Map</a></li><li><a href="viewModel.html">viewModel</a></li></ul><h3>Namespaces</h3><ul><li><a href="app.html">app</a></li><li><a href="Offline.html">Offline</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Sun Jul 05 2015 02:58:44 GMT-0400 (EDT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

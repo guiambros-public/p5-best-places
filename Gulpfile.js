@@ -1,5 +1,5 @@
 'use strict';
-var COMPRESS = true;       // false = skip minification. Useful for debugging
+var COMPRESS = false;       // false = skip minification. Useful for debugging
 
 // gulp control variables
 var gulp = require('gulp');
@@ -28,6 +28,9 @@ var jshint = require('gulp-jshint');
 var stylish = require('jshint-stylish');
 var jasmine = require('gulp-jasmine');
 
+// jsdoc
+var jsdoc = require("gulp-jsdoc");
+
 // shell execution
 var shell = require('gulp-shell')
 
@@ -38,19 +41,20 @@ var paths = {
     js: [
          'js/**/*.js*'
         ,'../components/jquery/dist/jquery.js'
-        ,'../components/knockout-mapping/knockout.mapping.js'
         ,'../components/knockoutjs/dist/knockout.js'
         ,'../components/underscore/underscore.js'
         ,'../components/slimscroll/jquery.slimscroll.js'
         ,'../components/bootstrap/dist/js/bootstrap.js'
+        ,'../components/offline/offline.min.js'
         ,'!_spec/*.js'
         ,'!db/**/*.js'
     ],
     css: [
          'css/*.css'
         ,'../components/bootstrap/dist/css/bootstrap.css'
-        ,'../components/bootstrap/dist/css/bootstrap-theme.css '
-        //,'...'
+        ,'../components/bootstrap/dist/css/bootstrap-theme.css'
+        ,'../components/offline/themes/offline-language-english.css'
+        ,'../components/offline/themes/offline-theme-default.css'
     ],
     html: [
          '**/*.html'
@@ -93,6 +97,7 @@ gulp.task('default',
     ,'compress_images'
     ,'test_jasmine'
     ,'others'
+    ,'jsdoc'
     ,'watch' //optional, if you want Gulp to keep monitoring your folders
     ],  function() {
     // nothing
@@ -159,6 +164,15 @@ gulp.task('others', function () {
     .pipe( gulp.dest( DEST ) );
 });
 
+
+gulp.task('jsdoc', function () {
+    return gulp.src( sourceDir(paths.js) )
+    .pipe( changed(DEST) )
+    .pipe( jsdoc.parser() )
+    .pipe( jsdoc.generator( DEST + '/docs', null, {showPrivate: true} ) )
+    .pipe( livereload() );
+});
+
 // -------
 
 gulp.task('test_jasmine', function () {
@@ -168,6 +182,7 @@ gulp.task('test_jasmine', function () {
 
 gulp.task('watch', function() {
     gulp.watch( sourceDir(paths.js),   ['minify_js'] );
+    gulp.watch( sourceDir(paths.js),   ['jsdoc'] );
     gulp.watch( sourceDir(paths.html), ['minify_html'] );
     gulp.watch( sourceDir(paths.css),  ['minify_css'] );
     gulp.watch( sourceDir(paths.img),  ['compress_images'] );

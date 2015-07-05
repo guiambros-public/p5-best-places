@@ -159,9 +159,26 @@ body {
 }
 
 #fsq_tip_text p {
-  font-size: 18px;
-  line-height: 1.4em;
+  font-size: 15px;
+  line-height: 1.3em;
+  font-weight: 300;
 }
+
+#fsq_tip_row1 {
+  min-height: 2em;
+}
+
+#fsq_tip_title {
+  font-size: 20px;
+  font-weight: 500;
+}
+
+#fsq_tip_tip_author {
+  font-size: 12px;
+  font-weight: 400;
+  margin-bottom: 5px;
+}
+
 
 #content {
   font-weight: normal;
@@ -169,24 +186,24 @@ body {
 }
 
 /* next/prev arrows in the infowindow box */
-#arrows {
-  width: 80px;
-  vertical-align: bottom;
-  margin: 25px;
-}
-
 .arrow-left,
-.arrow-right
-{
-  margin: 0px 0px 0px 5px;
+.arrow-right {
+  margin: 0px 10px 0px 0px;
+  padding-left: 4px;
+  font-weight: 700;
   background: #EEE;
   float: left;
   width: 20px;
-  vertical-align: bottom;
+  height: 1.5em;
+  position: relative
 }
 
-.arrow {
-  fill: #666;
+div.arrow-left p,
+div.arrow-right p {
+  position: absolute;
+  top: 50%;
+  transform: translate(0, -50%)
+
 }
 
 
@@ -266,7 +283,7 @@ body {
   }
 
   #debug {
-    content: "xs < 480px";
+    content: "xs <= 480px";
   }
 }
 
@@ -274,8 +291,12 @@ body {
 /*
     tablets
 */
-@media only screen and (min-width: 481px) and (max-width: 768px) {
+@media only screen and (max-width: 767px) {
   #body-instructions {
+    display: none;
+  }
+
+  #description-box {
     display: none;
   }
 
@@ -312,7 +333,91 @@ body {
     height: calc(100vh - 65px);    /* device height - height of header  [note: instructions is hidden] */
   }
 
+  #fsq_tip_text p {
+    font-size: 12px;
+  }
+
   #debug {
     content: "sd < 768px";
   }
+}
+
+/*
+    devices with reduced height
+*/
+@media only screen and (min-width: 767px) and (max-width: 860px) {
+  #body-instructions {
+    font-size: 17px;
+  }
+}
+
+
+/*
+    devices with *very* reduced height
+*/
+@media only screen and (max-height: 479px) {
+  #body-instructions {
+    display: none;
+  }
+
+  #num-places {
+    display: none;
+  }
+
+  #description-box {
+    display: none;
+ }
+
+  #debug {
+    content: "h < 480px";
+  }
+
+  #map-canvas {
+    height: calc(100vh - 65px);    /* device height - height of header  [note: instructions is hidden] */
+    width: 100%;
+  }
+
+  #listview-items {
+    height: calc(100vh - 150px) !important;
+  }
+
+  .listview-title {
+    font-weight: normal;
+    font-size: 14px;
+  }
+
+  .list-group-item {
+    padding: 4px 5px 4px 5px;
+  }
+
+  .list-group {
+    margin-bottom: 10px;
+  }
+
+  .listview-address {
+    font-size: 13px;
+  }
+
+}
+
+
+
+/*
+    devices with *somewhat* reduced height
+*/
+@media only screen and (max-height: 600px) {
+  #debug {
+    content: "h between 480-600px";
+  }
+
+  /* display ellipsis (...) after x lines */
+  #description-text {
+    max-height: 12em;      /* ~15 lines */
+  }
+
+
+  #description-image {
+    max-height: 140px;
+  }
+
 }

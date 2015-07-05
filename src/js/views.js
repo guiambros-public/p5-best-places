@@ -1,44 +1,57 @@
+/**
+ * @fileoverview This file contains the viewModel and the logic to build and update the user
+ * interface according to user's input, following the classic MVVM approach. It uses
+ * {@link http://knockoutjs.com Knockout.js} to interface with the view in HTML.
+ *
+ * @author Gui Ambros gui@wrgms.com
+ * @version 0.3
+ */
+
+/**
+ * Global app object
+ * @namespace app
+ * @global
+ */
 var app = app || {};
+
 
 $(function() {
     'use strict';
-
+/**
+ * This is the viewModel class. It handles click events, search
+ * and filtering, and instantiate Map and Foursquare objects
+ *
+ * @constructor viewModel
+ * @property search_box {KO.observable} Linked to HTML text field
+ * @property search_desc_checkbox {KO.observable} Linked to HTML checkbox
+ * @property filteredPlaces {KO.computed} Contains the filtered model, computed automatically based on search fields
+ * @property msg_filter_result {KO.computed} Message with # of records found. It is updated dynamically
+ */
     var viewModel = (function () {
         var self = this,
             search_box = ko.observable(""),
             search_desc_checkbox = ko.observable( false );
 
-
-        // filtered model view
-        var filteredPlaces = ko.computed( function() {
+         var filteredPlaces = ko.computed( function() {
                 if ( search_box().length == 0 ) {
                     return app.model();
                 }
                 return ko.utils.arrayFilter( app.model(), filter_fn );
             }).extend({ notify: 'always' });
 
-        // message with number of records found is automatically updated
         var msg_filter_result = ko.computed(function() {
             var len = filteredPlaces().length;
             return (len == 0) ? "No places found" : ("Showing " + len + " great place" + (len > 1 ? "s" : ""));
         });
 
 
-        // This function manages the search functionality, filtering the
-        // model according to the content of the search-field.
-        function filter_fn(i) {
-            var str = search_box().toLowerCase();
-            var checkbox = search_desc_checkbox();
-            if ( str.length == 0 ) {
-                return true;
-            }
-            return i.name.toLowerCase().indexOf( str ) > -1 ||
-                   i.address.toLowerCase().indexOf( str ) > -1 ||
-                   ( checkbox && (i.description.toLowerCase().indexOf( str ) > -1));
-        };
-
-        // Initialize model, filters, google maps, scroll bars
-        //
+        /**
+         * Initialize Map object, apply KO bindings and set up slim scroll (if needed)
+         *
+         * @memberof viewModel
+         * @public
+         * @returns {None}
+         */
         var initialize = function() {
             ko.applyBindings( filteredPlaces() );
 
@@ -52,15 +65,51 @@ $(function() {
                     });
                 });
             };
-	    };
+        };
 
 
-        /* This function manages click events on the sidebar with the destinations
 
-           Obtain the id of the clicked element, then populate description box and
-           search for this destination's address on Google Maps. If the destination
-           is found, search on Foursquare, and store results on `fsq` property.
-        */
+        /**
+         * This function manages the search functionality, filtering the
+         * model according to the checkbox and the search field (both are ko.observables)
+         *
+         * @memberof viewModel
+         * @private
+         * @param {Object} model_instance Item of the model to be searched
+         * @param {string} [search text = HTML field] ko.observable "search_box"
+         * @param {string} [search checkbox = HTML checkbox] ko.observable "search_desc_checkbox"
+         * @returns {Boolean} True if found, False otherwise
+         */
+        function filter_fn(obj) {
+            var str = search_box().toLowerCase();
+            var checkbox = search_desc_checkbox();
+            if ( str.length == 0 ) {
+                return true;
+            }
+            return obj.name.toLowerCase().indexOf( str ) > -1 ||
+                   obj.address.toLowerCase().indexOf( str ) > -1 ||
+                   ( checkbox && (obj.description.toLowerCase().indexOf( str ) > -1));
+        };
+
+
+        /**
+         * This function is called by the HTML in response to click events on each sidebar destination
+         *
+         * The id of the clicked element is obtained, and then we populate the description box/image
+         * and search for this destination's address on Google Maps. If the destination
+         * is found, search on Foursquare, and store results on `fsq` property.
+         *
+         * Updates: <ul>
+         * <li> HTML - Description image </li>
+         * <li> HTML - Description text </li>
+         * <li> Calls {@link Map.createMarker}  to create a marker with foursquare info </li>
+         * </ul>
+         *
+         * @memberof viewModel#
+         * @param {Object} element_data - Not used. Default value passed by KO
+         * @param {Object} element_clicked - Contains the Event object of the object clicked
+         * @returns {None} Doesn't return anything, but updates HTML and creates marker
+         */
         var sidebar_click = function(data, e) {
             e.preventDefault();
             var clicked_el = $( e.currentTarget );
@@ -108,16 +157,62 @@ $(function() {
 
     });
 
-    // wait for data json to load before initializing view
-    app.status
+
+    /**
+     * Load Offline.js, to handle on/off network state and inform the user
+     * if the connection status changes
+     * @namespace Offline
+     */
+    var opt = {
+        checkOnLoad: true,
+        interceptRequests: true,  // monitor AJAX requests
+        reconnect: {
+            initialDelay: 3,
+            delay: 5
+        },
+        requests: true             // Attempt to remake requests which fail while the connection is down
+    };
+    Offline.options = opt;
+
+    Offline.on("down", function() {
+        console.warn("Lost connection; trying to reconnect");
+    });
+
+    Offline.on("up", function() {
+        console.warn("Connection restablished");
+        location.reload();
+    });
+
+    var run = function() {
+        Offline.options.checks = {
+            image: { url: 'https://wrgms.com/ping.png?i=' + Math.random() },
+            active: 'image'
+        };
+        if (Offline.state === 'up') {
+            Offline.check();
+        }
+    }
+    setInterval(run, 4000);
+
+    app.model_status
         .done(function(){
+            /**
+             * Knockout Model
+             * @memberof! app#
+             */
             app.model = ko.observableArray( app.data );
+
+            /**
+             * Reference to the viewModel object
+             * @memberof! app#
+             * @see viewModel
+             */
             app.view = viewModel();
+
             app.view.initialize();
         })
         .fail(function(){
             console.log("App loader - ERROR loading model JSON file" );
             $("#body-instructions").html("<p>Error loading data file. Please check your connection or try again later.</p>");
         });
-
 });
