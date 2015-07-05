@@ -7,12 +7,13 @@ This is a simple proof-of-concept application,  built as part of Project 5 for [
 
 ## Site Structure
 
-The site was built using ~~Backbone.js~~ Knockout.js, Underscore.js and Twitter's Bootstrap. The structure followed the classic MVVM pattern, with good isolation between the view and the model.
+The site was built using [Knockout.js](http://knockoutjs.com/), [Underscore.js](http://underscorejs.org) and [Twitter's Bootstrap](http://getbootstrap.com). The structure followed the classic MVVM pattern, with good isolation between the view and the model.
 
-The model was implemented using Knockout's observableArray. The filtering is simply a computedObject, that dynamically extracts a subset of the original dataset, according to search terms.
+The Model was implemented using Knockout's observableArray. The filtering is simply a computedObject, which is updated dynamically whenever the search fields change.
 
 The maps are provided by [Google Maps API v3](https://developers.google.com/maps/documentation/javascript), and tips are provided by [Foursquare API](https://developer.foursquare.com/). API keys are needed to run the application.
 
+The application detects connection state using [Offline.js](http://github.hubspot.com/offline/docs/welcome/), informing the user accordingly. The page automatically refreshes when connection is restablished.
 
 ## Main Functionality
 
@@ -47,6 +48,7 @@ The maps are provided by [Google Maps API v3](https://developers.google.com/maps
 * If the data file can't be loaded, it displays an error message, asking to try again later
 * If Foursquare's API is not available, it simply shows the default marker and no infowindow with tips
 * If Google Maps is not available, it won't show the map, but the user can still browse and search for venues
+* External network connectivity is monitored using Offline.js, and pinging an external URL every 10s
 
 
 ## Source Data
@@ -60,12 +62,15 @@ I used [Gulp](http://gulpjs.com/) as the build system. Files are minified, image
 
 [Bower](http://bower.io/) was used to install components required by the application, like Bootstrap, Knockout.js and Underscore.js.
 
-For debugging purposes, you can set the COMPRESS variable to false on Gulpfile.js, and it'll disable minification and will keep console.log statements intact. It will also improve performance a bit.
+[JSDoc](http://usejsdoc.org/) was used for code self-documentation.
+
+For debugging purposes, you can set the `COMPRESS` variable to false in `Gulpfile.js`, and it'll disable minification and will keep console.log statements intact. It will also make the build process a bit faster.
 
 
 ## References:
 
 Many sources were used as inspiration or for troubleshooting. The list below has the most relevant references:
+
 
 #### Javascript Design Patterns
 
@@ -81,7 +86,6 @@ Many sources were used as inspiration or for troubleshooting. The list below has
 
 
 #### Knockout.js
-
 
 - [Knockout Official Documentation](http://knockoutjs.com/documentation/introduction.html)
 
@@ -99,6 +103,20 @@ Many sources were used as inspiration or for troubleshooting. The list below has
 - [Filtered Collection Decorator pattern, by Derick Bailey](http://spin.atomicobject.com/2013/08/08/filter-backbone-collection/)
 
 - [Developing Backbone.js Applications](http://addyosmani.github.io/backbone-fundamentals/#events)
+
+
+#### JSDoc v3
+
+- [Official documentation](http://usejsdoc.org/)
+
+- [An introduction to JSDoc](http://www.2ality.com/2011/08/jsdoc-intro.html)
+
+- [JSDoc: Generating API Documentation](http://speakingjs.com/es5/ch29.html)
+
+
+#### Offline.js
+
+- [GitHub](https://github.com/hubspot/offline)
 
 
 #### Maps & Markers
